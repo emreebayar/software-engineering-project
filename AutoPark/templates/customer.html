@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müşteri Otopark Girişi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Müşteri Otopark Girişi</h1>
+    
+    <form id="entryForm">
+        <input type="text" id="name" placeholder="Adınız" required>
+        <input type="text" id="tc" placeholder="TC Kimlik" required>
+        <input type="text" id="car_model" placeholder="Araç Modeli" required>
+        <input type="text" id="license_plate" placeholder="Plaka" required>
+        <button type="submit">Otoparka Giriş Yap</button>
+    </form>
+    <p id="entryMessage"></p>
+
+    <script>
+        document.getElementById('entryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const data = {
+                name: document.getElementById('name').value,
+                tc: document.getElementById('tc').value,
+                car_model: document.getElementById('car_model').value,
+                license_plate: document.getElementById('license_plate').value
+            };
+            
+            fetch('/add_member', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('entryMessage').innerText = data.message;
+            });
+        });
+    </script>
+</body>
+</html>
