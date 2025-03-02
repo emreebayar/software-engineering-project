@@ -1,13 +1,32 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
-from datetime import datetime
+import json
+import os
 
 app = Flask(__name__)
 
-# Geçici veritabanı (gerçek projede SQLite veya başka bir veritabanı kullanılabilir)
-members = []  # Kayıtlı müşteriler
-parking_lot = []  # Şu an otoparkta olan araçlar
-admin_credentials = {"admin": "password123"}  # Basit admin girişi için
-hourly_rate = 10  # Saatlik ücret (varsayılan)
+# Kullanıcı ve otopark verilerinin saklanacağı JSON dosyaları
+DATA_FILE = "users.json"
+PARKING_FILE = "parking.json"
+
+def load_users():
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return []
+
+def save_users(users):
+    with open(DATA_FILE, "w", encoding="utf-8") as file:
+        json.dump(users, file, indent=4)
+
+def load_parking():
+    if os.path.exists(PARKING_FILE):
+        with open(PARKING_FILE, "r", encoding="utf-8") as file:
+            return json.load(file)
+    return []
+
+def save_parking(parking):
+    with open(PARKING_FILE, "w", encoding="utf-8") as file:
+        json.dump(parking, file, indent=4)
 
 @app.route('/')
 def home():
@@ -19,47 +38,55 @@ def login():
     username = data.get("username")
     password = data.get("password")
     
-    if username in admin_credentials and admin_credentials[username] == password:
-        return jsonify({"success": True, "redirect": url_for('admin_panel')})
+    users = load_users()
+    for user in users:
+        if user["username"] == username and user["password"] == password:
+            if user.get("is_admin", False):
+                return jsonify({"success": True, "redirect": url_for('admin_panel')})
+            return jsonify({"success": True, "redirect": url_for('customer_panel')})
+    
     return jsonify({"success": False, "message": "Geçersiz kullanıcı adı veya şifre"})
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+    name = data.get("name")
+    tc = data.get("tc")
+    is_admin = data.get("is_admin", False)  # Varsayılan olarak kullanıcı admin değil
+    
+    users = load_users()
+    
+    # Kullanıcı adı kontrolü
+    if any(user["username"] == username for user in users):
+        return jsonify({"success": False, "message": "Bu kullanıcı adı zaten alınmış."})
+    
+    new_user = {"username": username, "password": password, "name": name, "tc": tc, "is_admin": is_admin}
+    users.append(new_user)
+    save_users(users)
+    
+    return jsonify({"success": True, "message": "Kayıt başarılı. Giriş yapabilirsiniz."})
 
 @app.route('/admin')
 def admin_panel():
-    return render_template('admin.html')
+    users = load_users()
+    parking_lot = load_parking()
+    return render_template('admin.html', users=users, parking_lot=parking_lot)
 
 @app.route('/customer')
 def customer_panel():
     return render_template('customer.html')
 
-@app.route('/add_member', methods=['POST'])
-def add_member():
-    data = request.json
-    entry_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    new_member = {
-        "name": data["name"],
-        "tc": data["tc"],
-        "car_model": data["car_model"],
-        "license_plate": data["license_plate"],
-        "entry_time": entry_time
-    }
-    members.append(new_member)
-    parking_lot.append(new_member)  # Otoparka ekleniyor
-    return jsonify({"message": "Araç başarıyla giriş yaptı."})
-
-@app.route('/set_price', methods=['POST'])
-def set_price():
-    global hourly_rate
-    data = request.json
-    hourly_rate = float(data.get("hourly_rate", hourly_rate))
-    return jsonify({"message": f"Saatlik ücret {hourly_rate} TL olarak güncellendi."})
-
-@app.route('/current_parking', methods=['GET'])
+@app.route('/current_parking')
 def current_parking():
+    parking_lot = load_parking()
     return jsonify(parking_lot)
 
-@app.route('/all_members', methods=['GET'])
+@app.route('/all_members')
 def all_members():
-    return jsonify(members)
+    users = load_users()
+    return jsonify(users)
 
 if __name__ == '__main__':
     app.run(debug=True)
