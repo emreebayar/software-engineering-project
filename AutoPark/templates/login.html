@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otopark Giriş Sayfası</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Otopark Sistemi Giriş</h1>
+    
+    <form id="loginForm">
+        <input type="text" id="username" placeholder="Kullanıcı Adı" required>
+        <input type="password" id="password" placeholder="Şifre" required>
+        <button type="submit">Giriş Yap</button>
+    </form>
+    <p id="loginMessage"></p>
+    
+    <h2>Üye Kayıt</h2>
+    <form id="registerForm">
+        <input type="text" id="reg_username" placeholder="Kullanıcı Adı" required>
+        <input type="password" id="reg_password" placeholder="Şifre" required>
+        <input type="text" id="reg_name" placeholder="Adınız" required>
+        <input type="text" id="reg_tc" placeholder="TC Kimlik" required>
+        <button type="submit">Kayıt Ol</button>
+    </form>
+    <p id="registerMessage"></p>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const data = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+            
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loginMessage').innerText = data.message;
+                if (data.success) {
+                    window.location.href = data.redirect;
+                }
+            });
+        });
+        
+        document.getElementById('registerForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const data = {
+                username: document.getElementById('reg_username').value,
+                password: document.getElementById('reg_password').value,
+                name: document.getElementById('reg_name').value,
+                tc: document.getElementById('reg_tc').value
+            };
+            
+            fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('registerMessage').innerText = data.message;
+            });
+        });
+    </script>
+</body>
+</html>

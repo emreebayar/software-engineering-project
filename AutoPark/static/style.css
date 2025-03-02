@@ -1,0 +1,164 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap');
+
+/* Dark Theme */
+body {
+    font-family: 'Roboto Mono', monospace;
+    background-color: #1e1e1e; /* Dark background */
+    color: #e0e0e0; /* Light text */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #2d2d2d; /* Dark container background */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    text-align: center;
+    color: #ffffff; /* White heading */
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    color: #e0e0e0; /* Light text */
+    font-weight: 500;
+}
+
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #444; /* Dark border */
+    border-radius: 5px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1rem;
+    background-color: #3a3a3a; /* Dark input background */
+    color: #e0e0e0; /* Light text */
+}
+
+input:focus {
+    outline: none;
+    border-color: #28a745; /* Green border on focus */
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+button {
+    background-color: #28a745; /* Green button */
+    color: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Boss Selection Bar */
+.boss-selection {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Space between checkboxes */
+    margin-bottom: 15px;
+}
+
+.boss-selection label {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between checkbox and text */
+    margin: 0; /* Remove default margin */
+    font-size: 1rem;
+    color: #e0e0e0; /* Light text */
+}
+
+.boss-selection input[type="checkbox"] {
+    margin: 0; /* Remove default margin */
+    width: auto; /* Allow checkbox to size naturally */
+}
+
+#results {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #3a3a3a; /* Dark results background */
+    border-radius: 5px;
+}
+
+#results h3 {
+    color: #ffffff; /* White heading */
+    margin-bottom: 10px;
+}
+
+#results ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#results li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #444; /* Darker list item background */
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#results li:hover {
+    background-color: #555; /* Slightly lighter on hover */
+}
+
+#results img {
+    margin-right: 10px;
+    border-radius: 5px;
+}
+
+.item-image {
+    width: 32px;
+    height: 32px;
+    object-fit: none; /* Ensure images maintain aspect ratio */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d; /* Dark scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555; /* Dark scrollbar thumb */
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #666; /* Lighter scrollbar thumb on hover */
+}
+
+/* Unique Items Header */
+#results h3.unique-header {
+    color: #ff6b6b; /* Red color for unique items */
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* Common Items Header */
+#results h3.common-header {
+    color: #4ecdc4; /* Teal color for common items */
+    margin-top: 20px;
+    margin-bottom: 10px;
+}

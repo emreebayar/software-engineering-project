@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Paneli - Otopark</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body>
+    <h1>Admin Paneli</h1>
+    
+    <h2>Saatlik Ücret Belirleme</h2>
+    <input type="number" id="hourlyRate" placeholder="Saatlik Ücret">
+    <button onclick="setPrice()">Fiyatı Güncelle</button>
+    <p id="priceMessage"></p>
+
+    <h2>Anlık Otopark Durumu</h2>
+    <button onclick="getCurrentParking()">Güncelle</button>
+    <ul id="parkingList"></ul>
+
+    <h2>Bütün Üyeler</h2>
+    <button onclick="getAllMembers()">Üyeleri Getir</button>
+    <ul id="memberList"></ul>
+
+    <script>
+        function setPrice() {
+            const price = document.getElementById('hourlyRate').value;
+            fetch('/set_price', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ hourly_rate: price })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('priceMessage').innerText = data.message;
+            });
+        }
+
+        function getCurrentParking() {
+            fetch('/current_parking')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('parkingList');
+                list.innerHTML = '';
+                data.forEach(car => {
+                    let li = document.createElement('li');
+                    li.textContent = car.license_plate + ' - ' + car.car_model + ' (Giriş: ' + car.entry_time + ')';
+                    list.appendChild(li);
+                });
+            });
+        }
+
+        function getAllMembers() {
+            fetch('/all_members')
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('memberList');
+                list.innerHTML = '';
+                data.forEach(member => {
+                    let li = document.createElement('li');
+                    li.textContent = member.name + ' - ' + member.license_plate + ' (' + member.tc + ')';
+                    list.appendChild(li);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
