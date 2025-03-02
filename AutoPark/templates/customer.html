@@ -3,42 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Müşteri Otopark Girişi</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
-    <h1>Müşteri Otopark Girişi</h1>
-    
-    <form id="entryForm">
-        <input type="text" id="name" placeholder="Adınız" required>
-        <input type="text" id="tc" placeholder="TC Kimlik" required>
-        <input type="text" id="car_model" placeholder="Araç Modeli" required>
-        <input type="text" id="license_plate" placeholder="Plaka" required>
-        <button type="submit">Otoparka Giriş Yap</button>
-    </form>
-    <p id="entryMessage"></p>
-
+    <title>Müşteri Kayıt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script>
-        document.getElementById('entryForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        function registerCustomer() {
+            const plate = document.getElementById('licensePlate').value;
+            const carType = document.getElementById('carType').value;
+            const fuelType = document.getElementById('fuelType').value;
             
-            const data = {
-                name: document.getElementById('name').value,
-                tc: document.getElementById('tc').value,
-                car_model: document.getElementById('car_model').value,
-                license_plate: document.getElementById('license_plate').value
-            };
-            
-            fetch('/add_member', {
+            fetch('/register_customer', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ license_plate: plate, car_type: carType, fuel_type: fuelType })
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('entryMessage').innerText = data.message;
+                document.getElementById('message').innerText = data.message;
             });
-        });
+        }
     </script>
+</head>
+<body>
+    <h1>Müşteri Kayıt</h1>
+    
+    <h2>Araç Bilgileri</h2>
+    <label for="licensePlate">Plaka:</label>
+    <input type="text" id="licensePlate" placeholder="Araç Plakanız">
+    
+    <h3>Araç Tipi</h3>
+    <select id="carType">
+        <option value="">Lütfen Seçiniz</option>
+        <option value="Otomobil">Otomobil</option>
+        <option value="Motosiklet">Motosiklet</option>
+    </select>
+    
+    <h3>Yakıt Tipi</h3>
+    <select id="fuelType">
+        <option value="">Lütfen Seçiniz</option>
+        <option value="Benzin">Benzin</option>
+        <option value="Dizel">Dizel</option>
+        <option value="LPG-CNG">LPG-CNG</option>
+        <option value="Elektrik">Elektrik</option>
+    </select>
+    
+    <button onclick="registerCustomer()">Kaydol</button>
+    <p id="message"></p>
 </body>
 </html>

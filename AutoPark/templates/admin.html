@@ -4,23 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Paneli - Otopark</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
-<body>
-    <h1>Admin Paneli</h1>
-    
-    <h2>Saatlik Ücret Belirleme</h2>
-    <input type="number" id="hourlyRate" placeholder="Saatlik Ücret">
-    <button onclick="setPrice()">Fiyatı Güncelle</button>
-    <p id="priceMessage"></p>
-
-    <h2>Anlık Otopark Durumu</h2>
-    <button onclick="getCurrentParking()">Güncelle</button>
-    <ul id="parkingList"></ul>
-
-    <h2>Bütün Üyeler</h2>
-    <button onclick="getAllMembers()">Üyeleri Getir</button>
-    <ul id="memberList"></ul>
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script>
         function setPrice() {
             const price = document.getElementById('hourlyRate').value;
@@ -41,9 +25,9 @@
             .then(data => {
                 const list = document.getElementById('parkingList');
                 list.innerHTML = '';
-                data.forEach(car => {
+                data.forEach((car, index) => {
                     let li = document.createElement('li');
-                    li.textContent = car.license_plate + ' - ' + car.car_model + ' (Giriş: ' + car.entry_time + ')';
+                    li.textContent = `${index + 1}. Plaka: ${car.plate}, Sahip: ${car.owner}`;
                     list.appendChild(li);
                 });
             });
@@ -55,13 +39,36 @@
             .then(data => {
                 const list = document.getElementById('memberList');
                 list.innerHTML = '';
-                data.forEach(member => {
+                data.filter(member => !member.is_admin).forEach((member, index) => {
                     let li = document.createElement('li');
-                    li.textContent = member.name + ' - ' + member.license_plate + ' (' + member.tc + ')';
+                    li.textContent = `${index + 1}. Kullanıcı: ${member.username}, TC: ${member.tc}`;
                     list.appendChild(li);
                 });
             });
         }
+
+        function refreshData() {
+            getCurrentParking();
+            getAllMembers();
+        }
+
+        window.onload = refreshData;
     </script>
+</head>
+<body>
+    <h1>Admin Paneli</h1>
+    
+    <h2>Saatlik Ücret Belirleme</h2>
+    <input type="number" id="hourlyRate" placeholder="Saatlik Ücret">
+    <button onclick="setPrice()">Fiyatı Güncelle</button>
+    <p id="priceMessage"></p>
+
+    <h2>Anlık Otopark Durumu</h2>
+    <button onclick="getCurrentParking()">Güncelle</button>
+    <ul id="parkingList"></ul>
+
+    <h2>Bütün Üyeler</h2>
+    <button onclick="getAllMembers()">Üyeleri Güncelle</button>
+    <ul id="memberList"></ul>
 </body>
 </html>
