@@ -26,5 +26,33 @@
         "name": "t",
         "tc": "t",
         "is_admin": false
+    },
+    {
+        "username": "u",
+        "password": "u",
+        "name": "u",
+        "tc": "u",
+        "is_admin": false
+    },
+    {
+        "username": "o",
+        "password": "o",
+        "name": "o",
+        "tc": "o",
+        "is_admin": false
+    },
+    {
+        "username": "l",
+        "password": "l",
+        "name": "l",
+        "tc": "l",
+        "is_admin": false
+    },
+    {
+        "username": "\u015f",
+        "password": "\u015f",
+        "name": "\u015f",
+        "tc": "\u015f",
+        "is_admin": false
     }
 ]

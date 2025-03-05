@@ -4,8 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Paneli - Otopark</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style2.css') }}">
+    <style>
+        /* Genel stil ve sıfırlama */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh; /* Ekran yüksekliği kadar */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 10px;
+            background-color: #f4f7fa;
+        }
+
+        h1 {
+            color: red; /* Kırmızı renk */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            max-height: 900px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex-grow: 1;
+            overflow-y: auto; /* İçeriği kaydırmak için */
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        /* Üyeler listesi yazı rengi */
+        #memberList li {
+            color: #000000; /* Siyah renk */
+            font-size: 1.1rem;
+            margin: 5px 0;
+        }
+
+        /* Üyeler listesinin kaydırılabilir olması */
+        #memberList {
+            max-height: 200px; /* Liste yüksekliği sınırlandırıldı */
+            overflow-y: auto; /* Taşan içerik kaydırılabilir */
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Form ve butonlar */
+        input[type="number"] {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            max-width: 300px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+    </style>
     <script>
+        // Saatlik ücret belirleme fonksiyonu
         function setPrice() {
             const price = document.getElementById('hourlyRate').value;
             fetch('/set_price', {
@@ -19,6 +107,7 @@
             });
         }
 
+        // Anlık otopark durumu getirme fonksiyonu
         function getCurrentParking() {
             fetch('/current_parking')
             .then(response => response.json())
@@ -33,42 +122,54 @@
             });
         }
 
+        // Üyeleri getirme fonksiyonu
         function getAllMembers() {
             fetch('/all_members')
             .then(response => response.json())
             .then(data => {
                 const list = document.getElementById('memberList');
-                list.innerHTML = '';
-                data.filter(member => !member.is_admin).forEach((member, index) => {
-                    let li = document.createElement('li');
-                    li.textContent = `${index + 1}. Kullanıcı: ${member.username}, TC: ${member.tc}`;
-                    list.appendChild(li);
+                list.innerHTML = '';  // Eski listeleri temizle
+                // Admin olmayan üyeleri filtrele ve listele
+                data.forEach((member, index) => {
+                    // Eğer üye admin değilse listele
+                    if (!member.is_admin) {
+                        let li = document.createElement('li');
+                        li.textContent = `${index + 1}. Kullanıcı: ${member.username}, TC: ${member.tc}`;
+                        list.appendChild(li);
+                    }
                 });
+            })
+            .catch(error => {
+                console.error("Üyeleri getirirken bir hata oluştu:", error);
             });
         }
 
+        // Sayfa yüklendiğinde verileri güncelleme
         function refreshData() {
             getCurrentParking();
             getAllMembers();
         }
 
+        // Sayfa yüklendiğinde refreshData fonksiyonunu çağır
         window.onload = refreshData;
     </script>
 </head>
 <body>
-    <h1>Admin Paneli</h1>
+    <h1>** ADMIN PANEL **</h1>
     
-    <h2>Saatlik Ücret Belirleme</h2>
-    <input type="number" id="hourlyRate" placeholder="Saatlik Ücret">
-    <button onclick="setPrice()">Fiyatı Güncelle</button>
-    <p id="priceMessage"></p>
+    <div class="container">
+        <h2>Saatlik Ücret Belirleme</h2>
+        <input type="number" id="hourlyRate" placeholder="Saatlik Ücret">
+        <button onclick="setPrice()">Fiyatı Güncelle</button>
+        <p id="priceMessage"></p>
 
-    <h2>Anlık Otopark Durumu</h2>
-    <button onclick="getCurrentParking()">Güncelle</button>
-    <ul id="parkingList"></ul>
+        <h2>Anlık Otopark Durumu</h2>
+        <button onclick="getCurrentParking()">Güncelle</button>
+        <ul id="parkingList"></ul>
 
-    <h2>Bütün Üyeler</h2>
-    <button onclick="getAllMembers()">Üyeleri Güncelle</button>
-    <ul id="memberList"></ul>
+        <h2>Bütün Üyeler</h2>
+        <button onclick="getAllMembers()">Üyeleri Güncelle</button>
+        <ul id="memberList"></ul>
+    </div>
 </body>
 </html>
