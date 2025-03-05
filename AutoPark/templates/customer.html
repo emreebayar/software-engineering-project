@@ -22,31 +22,86 @@
             });
         }
     </script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        h2, h3 {
+            margin-top: 10px;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: green;
+        }
+    </style>
 </head>
 <body>
-    <h1>Müşteri Kayıt</h1>
-    
-    <h2>Araç Bilgileri</h2>
-    <label for="licensePlate">Plaka:</label>
-    <input type="text" id="licensePlate" placeholder="Araç Plakanız">
-    
-    <h3>Araç Tipi</h3>
-    <select id="carType">
-        <option value="">Lütfen Seçiniz</option>
-        <option value="Otomobil">Otomobil</option>
-        <option value="Motosiklet">Motosiklet</option>
-    </select>
-    
-    <h3>Yakıt Tipi</h3>
-    <select id="fuelType">
-        <option value="">Lütfen Seçiniz</option>
-        <option value="Benzin">Benzin</option>
-        <option value="Dizel">Dizel</option>
-        <option value="LPG-CNG">LPG-CNG</option>
-        <option value="Elektrik">Elektrik</option>
-    </select>
-    
-    <button onclick="registerCustomer()">Kaydol</button>
-    <p id="message"></p>
+    <div class="container">
+        <h1>Müşteri Kayıt</h1>
+        
+        <h2>Araç Bilgileri</h2>
+        <input type="text" id="licensePlate" placeholder="Araç Plakanız">
+        
+        <h3>Araç Tipi</h3>
+        <select id="carType">
+            <option value="">Lütfen Seçiniz</option>
+            <option value="Otomobil">Otomobil</option>
+            <option value="Motosiklet">Motosiklet</option>
+            <option value="Motosiklet">Kamyon</option>
+        </select>
+        
+        <h3>Yakıt Tipi</h3>
+        <select id="fuelType">
+            <option value="">Lütfen Seçiniz</option>
+            <option value="Benzin">Benzin</option>
+            <option value="Dizel">Dizel</option>
+            <option value="LPG-CNG">LPG-CNG</option>
+            <option value="Elektrik">Elektrik</option>
+        </select>
+        
+        <button onclick="registerCustomer()">Kaydol</button>
+        <p id="message"></p>
+    </div>
 </body>
 </html>
