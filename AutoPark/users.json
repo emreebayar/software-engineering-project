@@ -54,5 +54,19 @@
         "name": "\u015f",
         "tc": "\u015f",
         "is_admin": false
+    },
+    {
+        "username": "deneme_kullanici",
+        "password": "123",
+        "name": "kullanici",
+        "tc": "2312321",
+        "is_admin": false
+    },
+    {
+        "username": "deneme1",
+        "password": "123",
+        "name": "deneme1",
+        "tc": "213",
+        "is_admin": false
     }
 ]

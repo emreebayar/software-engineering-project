@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='park_info.css') }}">
+    <title>Park Bilgisi</title>
+    <script>
+        function startTimer(entryTime) {
+            function updateTimer() {
+                let currentTime = Math.floor(Date.now() / 1000);
+                let duration = (currentTime - entryTime) / 3600;
+                document.getElementById("duration").innerText = duration.toFixed(2) + " saat";
+                let fee = Math.max(0, (duration - 2) * 50);
+                document.getElementById("fee").innerText = fee.toFixed(2) + " TL";
+            }
+            setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+    </script>
+</head>
+<body onload="startTimer({{ entry_time }})">
+    <div class="container">
+        <h1>Otopark Bilgileri</h1>
+        <div class="info-section">
+            <p><strong>Plaka:</strong> {{ plate }}</p>
+            <p><strong>Park Sırası:</strong> {{ park_sirasi }}</p>
+            <p><strong>Otopark Katı:</strong> {{ otopark_kati }}</p>
+        </div>
+        <div class="parking-info">
+            <p><strong>Geçen Süre:</strong> <span id="duration">0.00 saat</span></p>
+            <p><strong>Ücret:</strong> <span id="fee">0 TL</span></p>
+        </div>
+    </div>
+</body>
+</html>

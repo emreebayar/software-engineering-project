@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
-import json
-import os
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+import json, os, time
+
 
 app = Flask(__name__)
+app.secret_key = "supersecretkey"  # Kullanıcı oturumları için gerekli
 
 # Kullanıcı ve otopark verilerinin saklanacağı JSON dosyaları
 DATA_FILE = "users.json"
@@ -32,20 +33,90 @@ def save_parking(parking):
 def home():
     return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+@app.route("/login", methods=["POST"])
 def login():
     data = request.json
     username = data.get("username")
     password = data.get("password")
-    
     users = load_users()
+    
     for user in users:
         if user["username"] == username and user["password"] == password:
-            if user.get("is_admin", False):
-                return jsonify({"success": True, "redirect": url_for('admin_panel')})
-            return jsonify({"success": True, "redirect": url_for('customer_panel')})
+            session["username"] = username
+            session["name"] = user["name"]
+            session["is_admin"] = user.get("is_admin", False)  # Varsayılan olarak False
+            
+            if session["is_admin"]:
+                return jsonify({"success": True, "redirect": url_for("admin_panel")})
+            else:
+                return jsonify({"success": True, "redirect": url_for("customer_panel")})
     
-    return jsonify({"success": False, "message": "Geçersiz kullanıcı adı veya şifre"})
+    return jsonify({"success": False, "message": "Invalid credentials"})
+
+@app.route("/logout")
+def logout():
+    session.pop("username", None)
+    session.pop("name", None)
+    session.pop("is_admin", None)
+    return redirect(url_for("home"))
+
+@app.route("/register_car", methods=["POST"])
+def register_car():
+    if "username" not in session:
+        return jsonify({"success": False, "message": "User not logged in"}), 401
+    
+    data = request.json
+    plate = data.get("plate")
+    car_type = data.get("car_type")
+    fuel_type = data.get("fuel_type")
+    user_name = session.get("name")
+    timestamp = time.time()
+    
+    if not plate or not car_type or not fuel_type:
+        return jsonify({"success": False, "message": "Missing data"}), 400
+    
+    parking_data = load_parking()
+    
+    new_entry = {
+        "owner": user_name,
+        "plate": plate,
+        "car_type": car_type,
+        "fuel_type": fuel_type,
+        "entry_time": timestamp,
+        "park_sirasi": len(parking_data) + 1,  # Park sırasını otomatik ver
+        "otopark_kati": (len(parking_data) // 10) + 1  # Katı hesapla (Örnek olarak her 10 araç bir kata ayrılıyor)
+    }
+    
+    parking_data.append(new_entry)
+    save_parking(parking_data)
+    
+    return jsonify({"success": True, "message": "Car registered successfully", "redirect": url_for("parking_info")})
+
+
+@app.route("/parking_info")
+def parking_info():
+    if "username" not in session:
+        return redirect(url_for("home"))
+    
+    user_name = session.get("name")
+    parking_data = load_parking()
+    user_parking = next((car for car in parking_data if car["owner"] == user_name), None)
+    
+    if user_parking:    
+        if "entry_time" not in user_parking:
+            return jsonify({"message": "Entry time not found for this record."}), 500
+        
+        current_time = time.time()
+        duration = (current_time - user_parking["entry_time"]) / 3600  # Saat cinsine çevir
+        fee = max(0, (duration - 2) * 50)  # İlk 2 saat ücretsiz, sonrası 50 TL/saat
+
+        return render_template("park_info.html", 
+                               plate=user_parking["plate"], 
+                               park_sirasi=user_parking.get("park_sirasi", "Bilinmiyor"),
+                               otopark_kati=user_parking.get("otopark_kati", "Bilinmiyor"),
+                               entry_time=int(user_parking["entry_time"]))  # JavaScript için timestamp tam sayı olmalı
+    
+    return jsonify({"message": "Kayıt edilmiş araba bulunamadı."})
 
 @app.route('/register', methods=['POST'])
 def register():

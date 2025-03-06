@@ -1,0 +1,96 @@
+/* Genel Ayarlar ve Sıfırlama */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4f7fa;
+    color: #333;
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 600px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+/* Başlık */
+h1 {
+    color: #3498db;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    text-align: center;
+}
+
+/* Bilgi Alanları */
+.info-section {
+    margin-bottom: 20px;
+}
+
+.info-section p {
+    font-size: 1.1rem;
+    color: #555;
+    margin: 10px 0;
+}
+
+.info-section p strong {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Özel Bilgi Alanları */
+.parking-info {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #eee;
+    margin-top: 20px;
+}
+
+.parking-info p {
+    font-size: 1rem;
+    color: #555;
+    margin: 8px 0;
+}
+
+.parking-info p strong {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .info-section p {
+        font-size: 1rem;
+    }
+
+    .parking-info p {
+        font-size: 0.9rem;
+    }
+}

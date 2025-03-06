@@ -4,77 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Müşteri Kayıt</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
     <script>
         function registerCustomer() {
             const plate = document.getElementById('licensePlate').value;
             const carType = document.getElementById('carType').value;
             const fuelType = document.getElementById('fuelType').value;
             
-            fetch('/register_customer', {
+            fetch('/register_car', {  // `register_customer` yerine `register_car` olacak
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ license_plate: plate, car_type: carType, fuel_type: fuelType })
+                body: JSON.stringify({ plate: plate, car_type: carType, fuel_type: fuelType }) // "license_plate" yerine "plate"
             })
             .then(response => response.json())
             .then(data => {
                 document.getElementById('message').innerText = data.message;
             });
         }
-    </script>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
-
-        h2, h3 {
-            margin-top: 10px;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #message {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: green;
-        }
-    </style>
+    </script> 
 </head>
 <body>
     <div class="container">
@@ -101,6 +48,7 @@
         </select>
         
         <button onclick="registerCustomer()">Kaydol</button>
+        <button onclick="window.location.href='/parking_info'">Park Bilgisi</button>
         <p id="message"></p>
     </div>
 </body>
