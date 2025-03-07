@@ -68,5 +68,12 @@
         "name": "deneme1",
         "tc": "213",
         "is_admin": false
+    },
+    {
+        "username": "ter",
+        "password": "ter",
+        "name": "ter",
+        "tc": "ter",
+        "is_admin": false
     }
 ]

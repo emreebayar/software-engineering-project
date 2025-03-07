@@ -7,55 +7,92 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
     <script>
         // Saatlik ücret belirleme fonksiyonu
-        function setPrice() {
-            const price = document.getElementById('hourlyRate').value;
-            fetch('/set_price', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ hourly_rate: price })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('priceMessage').innerText = data.message;
-            });
+// Saatlik ücret belirleme fonksiyonu
+function setPrice() {
+    const price = document.getElementById('hourlyRate').value;
+
+    fetch('/set_price', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ hourly_rate: price })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('priceMessage').innerText = data.message;
+
+        if (data.success) {
+            updateParkingInfo(); // Güncellenmiş fiyatı otopark sayfasına yansıt
+        }
+    })
+    .catch(error => {
+        console.error("Fiyat güncellenirken hata oluştu:", error);
+    });
+}
+
+// Park bilgilerini güncelleyen fonksiyon
+function updateParkingInfo() {
+    fetch('/parking_info')
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('currentPrice').innerText = `Saatlik Ücret: ${data.fee} TL`;
+    })
+    .catch(error => {
+        console.error("Park bilgisi güncellenirken hata oluştu:", error);
+    });
+}
+
+// Anlık otopark durumu getirme fonksiyonu
+function getCurrentParking() {
+    fetch('/current_parking')
+    .then(response => response.json())
+    .then(data => {
+        const list = document.getElementById('parkingList');
+        list.innerHTML = ''; // Önceki verileri temizle
+
+        if (data.length === 0) {
+            list.innerHTML = '<li>Otoparkta araç bulunmamaktadır.</li>';
+            return;
         }
 
-        // Anlık otopark durumu getirme fonksiyonu
-        function getCurrentParking() {
-            fetch('/current_parking')
-            .then(response => response.json())
-            .then(data => {
-                const list = document.getElementById('parkingList');
-                list.innerHTML = '';
-                data.forEach((car, index) => {
-                    let li = document.createElement('li');
-                    li.textContent = `${index + 1}. Plaka: ${car.plate}, Sahip: ${car.owner}`;
-                    list.appendChild(li);
-                });
-            });
+        data.forEach((car, index) => {
+            let li = document.createElement('li');
+            li.textContent = `${index + 1}. Plaka: ${car.plate}, Sahip: ${car.owner}, 
+            Park Sırası: ${car.park_sirasi || 'Bilinmiyor'}, Kat: ${car.otopark_kati || 'Bilinmiyor'}`;
+            list.appendChild(li);
+        });
+    })
+    .catch(error => {
+        console.error("Parktaki araçları getirirken bir hata oluştu:", error);
+    });
+}
+
+// Üyeleri getirme fonksiyonu
+function getAllMembers() {
+    fetch('/all_members')
+    .then(response => response.json())
+    .then(data => {
+        const list = document.getElementById('memberList');
+        list.innerHTML = '';  // Eski listeleri temizle
+        
+        if (data.length === 0) {
+            list.innerHTML = '<li>Kayıtlı üye bulunmamaktadır.</li>';
+            return;
         }
 
-        // Üyeleri getirme fonksiyonu
-        function getAllMembers() {
-            fetch('/all_members')
-            .then(response => response.json())
-            .then(data => {
-                const list = document.getElementById('memberList');
-                list.innerHTML = '';  // Eski listeleri temizle
-                // Admin olmayan üyeleri filtrele ve listele
-                data.forEach((member, index) => {
-                    // Eğer üye admin değilse listele
-                    if (!member.is_admin) {
-                        let li = document.createElement('li');
-                        li.textContent = `${index + 1}. Kullanıcı: ${member.username}, TC: ${member.tc}`;
-                        list.appendChild(li);
-                    }
-                });
-            })
-            .catch(error => {
-                console.error("Üyeleri getirirken bir hata oluştu:", error);
-            });
-        }
+        // Admin olmayan üyeleri filtrele ve listele
+        data.forEach((member, index) => {
+            if (!member.is_admin) {
+                let li = document.createElement('li');
+                li.textContent = `${index + 1}. Kullanıcı: ${member.username}, TC: ${member.tc}`;
+                list.appendChild(li);
+            }
+        });
+    })
+    .catch(error => {
+        console.error("Üyeleri getirirken bir hata oluştu:", error);
+    });
+}
+
 
         // Sayfa yüklendiğinde verileri güncelleme
         function refreshData() {
@@ -72,7 +109,8 @@
     
     <div class="container">
         <h2>Saatlik Ücret Belirleme</h2>
-        <input type="number" id="hourlyRate" placeholder="Saatlik Ücret">
+        <h3 id="currentPrice">Saatlik Ücret: 0 TL</h3>
+        <input type="number" id="hourlyRate" placeholder="Yeni saatlik ücret">
         <button onclick="setPrice()">Fiyatı Güncelle</button>
         <p id="priceMessage"></p>
 

@@ -6,15 +6,43 @@
         "fuel_type": "Benzin",
         "entry_time": 17412832.1142902,
         "park_sirasi": 1,
-        "otopark_kati": 1
+        "otopark_kati": 1,
+        "hourly_rate": 1
     },
     {
-        "owner": "t",
+        "owner": "e",
         "plate": "123",
         "car_type": "Otomobil",
         "fuel_type": "Benzin",
-        "entry_time": 1741283533.1375608,
-        "park_sirasi": 2,
+        "entry_time": 17412832.1142902,
+        "park_sirasi": 3,
+        "otopark_kati": 1
+    },
+    {
+        "owner": "e",
+        "plate": "123",
+        "car_type": "Otomobil",
+        "fuel_type": "Benzin",
+        "entry_time": 17412832.1142902,
+        "park_sirasi": 5,
+        "otopark_kati": 1
+    },
+    {
+        "owner": "e",
+        "plate": "123",
+        "car_type": "Otomobil",
+        "fuel_type": "Benzin",
+        "entry_time": 17412832.1142902,
+        "park_sirasi": 7,
+        "otopark_kati": 1
+    },
+    {
+        "owner": "e",
+        "plate": "123",
+        "car_type": "Otomobil",
+        "fuel_type": "Benzin",
+        "entry_time": 17412832.1142902,
+        "park_sirasi": 9,
         "otopark_kati": 1
     }
 ]

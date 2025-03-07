@@ -33,6 +33,59 @@ def save_parking(parking):
 def home():
     return render_template('login.html')
 
+@app.route("/get_price", methods=["GET"])
+def get_price():
+    try:
+        with open("parking.json", "r") as file:
+            parking_data = json.load(file)
+        
+        # Eğer JSON bir listeyse, ilk elemandan fiyatı alalım
+        if isinstance(parking_data, list):
+            hourly_rate = parking_data[0].get("hourly_rate", 50)  # Varsayılan 50 TL
+        else:
+            hourly_rate = parking_data.get("hourly_rate", 50)
+
+        return jsonify({"hourly_rate": hourly_rate})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/set_price", methods=["POST"])
+def set_price():
+    if "is_admin" not in session or not session["is_admin"]:
+        return jsonify({"success": False, "message": "Yetkisiz erişim"}), 403
+
+    data = request.json
+    new_price = data.get("hourly_rate")
+
+    if new_price is None or not str(new_price).isdigit():
+        return jsonify({"success": False, "message": "Geçerli bir fiyat giriniz"}), 400
+
+    new_price = int(new_price)
+
+    try:
+        # JSON dosyasını oku
+        with open("parking.json", "r") as file:
+            parking_data = json.load(file)
+
+        # Eğer JSON bir listeyse, ilk öğeye saatlik ücreti ekleyelim
+        if isinstance(parking_data, list):
+            if len(parking_data) > 0 and isinstance(parking_data[0], dict):
+                parking_data[0]["hourly_rate"] = new_price
+            else:
+                return jsonify({"success": False, "message": "Geçersiz JSON formatı"}), 500
+        else:
+            parking_data["hourly_rate"] = new_price  # JSON bir sözlükse direkt ekleyelim
+
+        # Güncellenmiş veriyi tekrar JSON dosyasına yaz
+        with open("parking.json", "w") as file:
+            json.dump(parking_data, file, indent=4)
+
+        return jsonify({"success": True, "message": f"Fiyat başarıyla {new_price} TL olarak güncellendi."})
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Hata oluştu: {str(e)}"}), 500
+
+
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -45,20 +98,37 @@ def login():
             session["username"] = username
             session["name"] = user["name"]
             session["is_admin"] = user.get("is_admin", False)  # Varsayılan olarak False
-            
+
             if session["is_admin"]:
                 return jsonify({"success": True, "redirect": url_for("admin_panel")})
             else:
-                return jsonify({"success": True, "redirect": url_for("customer_panel")})
+                # Kullanıcının otopark kaydı var mı kontrol et
+                parking_data = load_parking()
+                user_parking = next((car for car in parking_data if car["owner"] == user["name"]), None)
+
+                if user_parking:
+                    return jsonify({"success": True, "redirect": url_for("parking_info")})  # Park bilgisi sayfasına yönlendir
+                
+                return jsonify({"success": True, "redirect": url_for("customer_panel")})  # Normal müşteri paneline yönlendir
     
     return jsonify({"success": False, "message": "Invalid credentials"})
 
 @app.route("/logout")
 def logout():
+    user_name = session.get("name")  # Kullanıcı adını al
+
+    # Kullanıcı park verisini güncelle (sil)
+    parking_data = load_parking()
+    parking_data = [car for car in parking_data if car["owner"] != user_name]  
+    save_parking(parking_data)  # Güncellenmiş veriyi kaydet
+
+    # Kullanıcı oturumunu kapat
     session.pop("username", None)
     session.pop("name", None)
     session.pop("is_admin", None)
+
     return redirect(url_for("home"))
+
 
 @app.route("/register_car", methods=["POST"])
 def register_car():
@@ -83,7 +153,7 @@ def register_car():
         "car_type": car_type,
         "fuel_type": fuel_type,
         "entry_time": timestamp,
-        "park_sirasi": len(parking_data) + 1,  # Park sırasını otomatik ver
+        "park_sirasi": (len(parking_data) + 1) % 10,  # Park sırasını otomatik ver
         "otopark_kati": (len(parking_data) // 10) + 1  # Katı hesapla (Örnek olarak her 10 araç bir kata ayrılıyor)
     }
     
