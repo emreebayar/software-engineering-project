@@ -131,3 +131,17 @@ p {
         width: 100%;
     }
 }
+
+.btn-danger {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}

@@ -7,15 +7,6 @@
         "entry_time": 174130399.5098937,
         "park_sirasi": 3,
         "otopark_kati": 1,
-        "hourly_rate": 50
-    },
-    {
-        "owner": "gh",
-        "plate": "ali",
-        "car_type": "Otomobil",
-        "fuel_type": "Benzin",
-        "entry_time": 174350470.8080943,
-        "park_sirasi": 4,
-        "otopark_kati": 1
+        "hourly_rate": 500
     }
 ]

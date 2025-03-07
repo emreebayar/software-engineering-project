@@ -7,87 +7,17 @@
         "is_admin": true
     },
     {
-        "username": "e",
-        "password": "e",
-        "name": "e",
-        "tc": "e",
-        "is_admin": false
-    },
-    {
-        "username": "r",
-        "password": "r",
-        "name": "r",
-        "tc": "r",
-        "is_admin": false
-    },
-    {
-        "username": "t",
-        "password": "t",
-        "name": "t",
-        "tc": "t",
-        "is_admin": false
-    },
-    {
-        "username": "u",
-        "password": "u",
-        "name": "u",
-        "tc": "u",
-        "is_admin": false
-    },
-    {
-        "username": "o",
-        "password": "o",
-        "name": "o",
-        "tc": "o",
-        "is_admin": false
-    },
-    {
-        "username": "l",
-        "password": "l",
-        "name": "l",
-        "tc": "l",
-        "is_admin": false
-    },
-    {
-        "username": "\u015f",
-        "password": "\u015f",
-        "name": "\u015f",
-        "tc": "\u015f",
-        "is_admin": false
-    },
-    {
-        "username": "deneme_kullanici",
-        "password": "123",
-        "name": "kullanici",
-        "tc": "2312321",
-        "is_admin": false
-    },
-    {
-        "username": "deneme1",
-        "password": "123",
-        "name": "deneme1",
-        "tc": "213",
-        "is_admin": false
-    },
-    {
-        "username": "ter",
-        "password": "ter",
-        "name": "ter",
-        "tc": "ter",
-        "is_admin": false
-    },
-    {
-        "username": "v",
-        "password": "v",
-        "name": "v",
-        "tc": "v",
-        "is_admin": false
-    },
-    {
         "username": "gh",
         "password": "gh",
         "name": "gh",
         "tc": "gh",
+        "is_admin": false
+    },
+    {
+        "username": "ali",
+        "password": "123",
+        "name": "ali",
+        "tc": "123",
         "is_admin": false
     }
 ]
