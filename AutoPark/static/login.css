@@ -11,21 +11,24 @@ body {
     color: #333;
     line-height: 1.6;
     padding: 20px;
-} 
-body {
     background-image: url('/static/images/araba.png');
     background-size: cover;
-    background-position: center; 
-    background-repeat: no-repeat; 
+    background-position: center;
+    background-repeat: no-repeat;
     color: #fff;
     height: 100vh;
-    margin: 0; /
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
-
 
 h1, h2, h3 {
     color: #000000;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 /* Form Elemanları */
@@ -91,4 +94,34 @@ a:hover {
     input[type="text"], input[type="password"], input[type="email"], button {
         width: 100%;
     }
+}
+
+/* Ek Stil */
+form {
+    margin-bottom: 20px;
+}
+
+input {
+    margin: 10px 0;
+    padding: 10px;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+p {
+    color: red;
 }
