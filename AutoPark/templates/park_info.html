@@ -6,42 +6,40 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='park_info.css') }}">
     <title>Park Bilgisi</title>
     <script>
-function startTimer(entryTime) {
-    let hourlyRate = 50; // Varsayılan fiyat
+        function startTimer(entryTime) {
+            let hourlyRate = 50; // Varsayılan fiyat
 
-    // Sunucudan güncel fiyatı al
-    function fetchPrice() {
-        fetch("/get_price")
-            .then(response => response.json())
-            .then(data => {
-                if (data.hourly_rate) {
-                    hourlyRate = data.hourly_rate;
-                }
-            })
-            .catch(error => {
-                console.error("Fiyat alınırken hata oluştu:", error);
-            });
-    }
+            // Sunucudan güncel fiyatı al
+            function fetchPrice() {
+                fetch("/get_price")
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.hourly_rate) {
+                            hourlyRate = data.hourly_rate;
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Fiyat alınırken hata oluştu:", error);
+                    });
+            }
 
-    function updateTimer() {
-        let currentTime = Math.floor(Date.now() / 1000);
-        let duration = (currentTime - entryTime) / 3600;
-        document.getElementById("duration").innerText = duration.toFixed(2) + " saat";
-        
-        let fee = Math.max(0, (duration - 2) * hourlyRate);
-        document.getElementById("fee").innerText = fee.toFixed(2) + " TL";
-    }
+            function updateTimer() {
+                let currentTime = Math.floor(Date.now() / 1000);
+                let duration = (currentTime - entryTime) / 3600;
+                document.getElementById("duration").innerText = duration.toFixed(2) + " saat";
+                
+                let fee = Math.max(0, (duration - 2) * hourlyRate);
+                document.getElementById("fee").innerText = fee.toFixed(2) + " TL";
+            }
 
-    setInterval(updateTimer, 1000);  // Süreyi her saniye güncelle
-    setInterval(fetchPrice, 1000);  // Fiyatı her 10 saniyede bir güncelle
-    fetchPrice();  // İlk fiyatı anında çek
-    updateTimer(); // İlk süreyi anında hesapla
-}
-
-
+            setInterval(updateTimer, 1000);  // Süreyi her saniye güncelle
+            setInterval(fetchPrice, 10000);  // Fiyatı her 10 saniyede bir güncelle
+            fetchPrice();  // İlk fiyatı anında çek
+            updateTimer(); // İlk süreyi anında hesapla
+        }
     </script>
 </head>
-<body onload="startTimer({{ entry_time }})">
+<body onload="startTimer(Number('{{ entry_time }}'))">
     <div class="container">
         <h1>Otopark Bilgileri</h1>
         <div class="info-section">
