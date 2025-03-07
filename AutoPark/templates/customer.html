@@ -11,10 +11,10 @@
             const carType = document.getElementById('carType').value;
             const fuelType = document.getElementById('fuelType').value;
             
-            fetch('/register_car', {  // `register_customer` yerine `register_car` olacak
+            fetch('/register_car', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ plate: plate, car_type: carType, fuel_type: fuelType }) // "license_plate" yerine "plate"
+                body: JSON.stringify({ plate: plate, car_type: carType, fuel_type: fuelType })
             })
             .then(response => response.json())
             .then(data => {
@@ -24,21 +24,19 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <h1>Müşteri Kayıt</h1>
-        
-        <h2>Araç Bilgileri</h2>
+    <div class="container" style="width: 500px; margin: auto; text-align: center;">
+        <h1>Müşteri Araç Bilgileri</h1>
         <input type="text" id="licensePlate" placeholder="Araç Plakanız">
-        
-        <h3>Araç Tipi</h3>
+
+        <h3 style="font-size: 20px; text-align: center; margin-top: 20px; margin-bottom: 10px;">Araç Tipi</h3>
         <select id="carType">
             <option value="">Lütfen Seçiniz</option>
             <option value="Otomobil">Otomobil</option>
             <option value="Motosiklet">Motosiklet</option>
-            <option value="Motosiklet">Kamyon</option>
+            <option value="Kamyon">Kamyon</option>
         </select>
-        
-        <h3>Yakıt Tipi</h3>
+
+        <h3 style="font-size: 20px; text-align: center; margin-top: 20px; margin-bottom: 10px;">Yakıt Tipi</h3>
         <select id="fuelType">
             <option value="">Lütfen Seçiniz</option>
             <option value="Benzin">Benzin</option>
@@ -46,7 +44,7 @@
             <option value="LPG-CNG">LPG-CNG</option>
             <option value="Elektrik">Elektrik</option>
         </select>
-        
+
         <button onclick="registerCustomer()">Kaydol</button>
         <button onclick="window.location.href='/parking_info'">Park Bilgisi</button>
         <p id="message"></p>

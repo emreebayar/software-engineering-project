@@ -82,5 +82,12 @@
         "name": "v",
         "tc": "v",
         "is_admin": false
+    },
+    {
+        "username": "gh",
+        "password": "gh",
+        "name": "gh",
+        "tc": "gh",
+        "is_admin": false
     }
 ]

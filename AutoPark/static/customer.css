@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     display: flex;
@@ -6,14 +12,20 @@ body {
     height: 100vh;
     background-color: #f4f4f4;
 }
+
 .container {
     background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 450px; /* Önceki 350px idi, genişletildi */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    width: 400px;
     text-align: center;
 }
+
+h1 {
+    margin-bottom: 20px;
+}
+
 input, select, button {
     width: 100%;
     padding: 12px;
@@ -22,6 +34,7 @@ input, select, button {
     border-radius: 5px;
     font-size: 16px;
 }
+
 button {
     background-color: #28a745;
     color: white;
@@ -29,12 +42,29 @@ button {
     cursor: pointer;
     border: none;
     font-weight: bold;
+    transition: background 0.3s;
 }
+
 button:hover {
     background-color: #218838;
 }
+
 #message {
     margin-top: 15px;
     color: #d9534f;
     font-weight: bold;
+}
+
+.btn-danger {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
 }
