@@ -8,7 +8,6 @@
     <script>
         function startTimer(entryTime) {
             let hourlyRate = 50; // Varsayılan fiyat
-
             // Sunucudan güncel fiyatı al
             function fetchPrice() {
                 fetch("/get_price")

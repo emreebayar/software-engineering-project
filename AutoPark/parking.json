@@ -1,12 +1,82 @@
 [
     {
-        "owner": "gh",
-        "plate": "ali",
-        "car_type": "Otomobil",
-        "fuel_type": "Benzin",
-        "entry_time": 174130399.5098937,
+        "owner": "ali",
+        "plate": "35DEF789",
+        "car_type": "Kamyon",
+        "fuel_type": "Dizel",
+        "entry_time": 174130600.9876543,
         "park_sirasi": 3,
         "otopark_kati": 1,
-        "hourly_rate": 500
+        "hourly_rate": 100
+    },
+    {
+        "owner": "ayse",
+        "plate": "07GHI012",
+        "car_type": "Otomobil",
+        "fuel_type": "LPG-CNG",
+        "entry_time": 174130700.456789,
+        "park_sirasi": 4,
+        "otopark_kati": 1,
+        "hourly_rate": 50
+    },
+    {
+        "owner": "mehmet",
+        "plate": "16JKL345",
+        "car_type": "Motosiklet",
+        "fuel_type": "Benzin",
+        "entry_time": 174030800.3216549,
+        "park_sirasi": 5,
+        "otopark_kati": 1,
+        "hourly_rate": 50
+    },
+    {
+        "owner": "zeynep",
+        "plate": "34MNO678",
+        "car_type": "Otomobil",
+        "fuel_type": "Elektrik",
+        "entry_time": 174130900.6549873,
+        "park_sirasi": 6,
+        "otopark_kati": 2,
+        "hourly_rate": 50
+    },
+    {
+        "owner": "admin2",
+        "plate": "06PQR901",
+        "car_type": "Kamyon",
+        "fuel_type": "Dizel",
+        "entry_time": 174131000.7891234,
+        "park_sirasi": 7,
+        "otopark_kati": 2,
+        "hourly_rate": 50
+    },
+    {
+        "owner": "fatma",
+        "plate": "35STU234",
+        "car_type": "Otomobil",
+        "fuel_type": "LPG-CNG",
+        "entry_time": 174131100.1234567,
+        "park_sirasi": 8,
+        "otopark_kati": 2,
+        "hourly_rate": 50
+    },
+    {
+        "owner": "mustafa",
+        "plate": "07VWX567",
+        "car_type": "Motosiklet",
+        "fuel_type": "Benzin",
+        "entry_time": 174131200.9876543,
+        "park_sirasi": 9,
+        "otopark_kati": 2,
+        "hourly_rate": 50
+    },
+    {
+        "owner": "elif",
+        "plate": "16YZA890",
+        "car_type": "Otomobil",
+        "fuel_type": "Elektrik",
+        "entry_time": 174131300.456789,
+        "park_sirasi": 10,
+        "otopark_kati": 2,
+        "hourly_rate": 50
     }
 ]
