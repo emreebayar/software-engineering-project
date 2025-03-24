@@ -3,124 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Paneli - Otopark</title>
+    <title>Admin Paneli - Otopark Sistemi</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-parking"></i> <span>Admin Paneli</span>
+        </div>
+        <div class="header-actions">
+            <!-- Dark Mode Toggle -->
+            <button id="darkModeToggle" class="dark-mode-toggle"><i class="fas fa-moon toggle-icon"></i></button>
+            <!-- Çıkış Yap Butonu -->
+            <a href="/logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <div class="card">
+                <i class="fas fa-car card-icon"></i>
+                <h3>Toplam Araç</h3>
+                <p id="totalCars">0</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-parking card-icon"></i>
+                <h3>Dolu Yer</h3>
+                <p id="occupiedSpots">0</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-sign-out-alt card-icon"></i>
+                <h3>Boş Yer</h3>
+                <p id="availableSpots">200</p>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="price"><i class="fas fa-money-bill-wave"></i> Saatlik Ücret</button>
+            <button class="tab-button" data-tab="parking"><i class="fas fa-car"></i> Anlık Otopark Durumu</button>
+            <button class="tab-button" data-tab="members"><i class="fas fa-users"></i> Üyeler</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-content">
+            <!-- Saatlik Ücret Tab -->
+            <div id="price" class="tab-pane active">
+                <h2>Saatlik Ücret Belirleme</h2>
+                <div class="current-price">
+                    <h3 id="currentPrice">Saatlik Ücret: 50 TL</h3>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lira-sign"></i>
+                    <input type="number" id="hourlyRate" placeholder="Yeni saatlik ücret (TL)" min="0" step="1">
+                </div>
+                <button onclick="setPrice()"><i class="fas fa-save"></i> Fiyatı Güncelle</button>
+                <p id="priceMessage" class="message"></p>
+            </div>
+
+            <!-- Anlık Otopark Durumu Tab -->
+            <div id="parking" class="tab-pane">
+                <h2>Anlık Otopark Durumu</h2>
+                <button onclick="getCurrentParking()"><i class="fas fa-sync-alt"></i> Güncelle</button>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Plaka</th>
+                                <th>Sahip</th>
+                                <th>Park Sırası</th>
+                                <th>Kat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parkingList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Üyeler Tab -->
+            <div id="members" class="tab-pane">
+                <h2>Kayıtlı Üyeler</h2>
+                <button onclick="getAllMembers()"><i class="fas fa-sync-alt"></i> Üyeleri Güncelle</button>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>TC Kimlik</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 Otopark Sistemi. Tüm hakları saklıdır. | Sürüm 1.0.0</p>
+    </footer>
+
+    <!-- JavaScript -->
     <script>
-// Saatlik ücret belirleme fonksiyonu
-function setPrice() {
-    const price = document.getElementById('hourlyRate').value;
+        // Saatlik ücret belirleme fonksiyonu
+        function setPrice() {
+            const price = document.getElementById('hourlyRate').value;
+            const button = document.querySelector('#price button');
+            showLoading();
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Güncelleniyor...';
 
-    fetch('/set_price', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ hourly_rate: price })
-    })
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('priceMessage').innerText = data.message;
+            fetch('/set_price', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hourly_rate: price })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                document.getElementById('priceMessage').innerText = data.message;
+                document.getElementById('priceMessage').classList.toggle('success', data.success);
+                document.getElementById('priceMessage').classList.toggle('error', !data.success);
 
-        if (data.success) {
-            updateParkingInfo(); // Güncellenmiş fiyatı otopark sayfasına yansıt
-        }
-    })
-    .catch(error => {
-        console.error("Fiyat güncellenirken hata oluştu:", error);
-    });
-}
-
-// Park bilgilerini güncelleyen fonksiyon
-function updateParkingInfo() {
-    fetch('/parking_info')
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('currentPrice').innerText = `Saatlik Ücret: ${data.fee} TL`;
-    })
-    .catch(error => {
-        console.error("Park bilgisi güncellenirken hata oluştu:", error);
-    });
-}
-
-// Anlık otopark durumu getirme fonksiyonu
-function getCurrentParking() {
-    fetch('/current_parking')
-    .then(response => response.json())
-    .then(data => {
-        const list = document.getElementById('parkingList');
-        list.innerHTML = ''; // Önceki verileri temizle
-
-        if (data.length === 0) {
-            list.innerHTML = '<li>Otoparkta araç bulunmamaktadır.</li>';
-            return;
+                if (data.success) {
+                    updateParkingInfo();
+                }
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-save"></i> Fiyatı Güncelle';
+            })
+            .catch(error => {
+                hideLoading();
+                console.error("Fiyat güncellenirken hata oluştu:", error);
+                document.getElementById('priceMessage').innerText = 'Bir hata oluştu.';
+                document.getElementById('priceMessage').classList.add('error');
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-save"></i> Fiyatı Güncelle';
+            });
         }
 
-        data.forEach((car, index) => {
-            let li = document.createElement('li');
-            li.textContent = `${index + 1}. Plaka: ${car.plate}, Sahip: ${car.owner}, 
-            Park Sırası: ${car.park_sirasi || 'Bilinmiyor'}, Kat: ${car.otopark_kati || 'Bilinmiyor'}`;
-            list.appendChild(li);
+        // Park bilgilerini güncelleyen fonksiyon
+        function updateParkingInfo() {
+            fetch('/parking_info')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('currentPrice').innerText = `Saatlik Ücret: ${data.fee} TL`;
+            })
+            .catch(error => {
+                console.error("Park bilgisi güncellenirken hata oluştu:", error);
+            });
+        }
+
+        // Anlık otopark durumu getirme fonksiyonu
+        function getCurrentParking() {
+            const button = document.querySelector('#parking button');
+            showLoading();
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Güncelleniyor...';
+
+            fetch('/current_parking')
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                const list = document.getElementById('parkingList');
+                list.innerHTML = '';
+
+                if (data.length === 0) {
+                    list.innerHTML = '<tr><td colspan="5" class="empty">Otoparkta araç bulunmamaktadır.</td></tr>';
+                } else {
+                    data.forEach((car, index) => {
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${car.plate}</td>
+                            <td>${car.owner}</td>
+                            <td>${car.park_sirasi || 'Bilinmiyor'}</td>
+                            <td>${car.otopark_kati || 'Bilinmiyor'}</td>
+                        `;
+                        list.appendChild(tr);
+                    });
+                }
+
+                // Dashboard kartlarını güncelle
+                document.getElementById('totalCars').innerText = data.length;
+                document.getElementById('occupiedSpots').innerText = data.length;
+                document.getElementById('availableSpots').innerText = 200 - data.length;
+
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> Güncelle';
+            })
+            .catch(error => {
+                hideLoading();
+                console.error("Parktaki araçları getirirken bir hata oluştu:", error);
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> Güncelle';
+            });
+        }
+
+        // Üyeleri getirme fonksiyonu
+        function getAllMembers() {
+            const button = document.querySelector('#members button');
+            showLoading();
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Güncelleniyor...';
+
+            fetch('/all_members')
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                const list = document.getElementById('memberList');
+                list.innerHTML = '';
+
+                const nonAdminMembers = data.filter(member => !member.is_admin);
+                if (nonAdminMembers.length === 0) {
+                    list.innerHTML = '<tr><td colspan="3" class="empty">Kayıtlı üye bulunmamaktadır.</td></tr>';
+                } else {
+                    nonAdminMembers.forEach((member, index) => {
+                        let tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${member.username}</td>
+                            <td>${member.tc}</td>
+                        `;
+                        list.appendChild(tr);
+                    });
+                }
+
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> Üyeleri Güncelle';
+            })
+            .catch(error => {
+                hideLoading();
+                console.error("Üyeleri getirirken bir hata oluştu:", error);
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-sync-alt"></i> Üyeleri Güncelle';
+            });
+        }
+
+        // Yükleme animasyonunu göster
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        // Yükleme animasyonunu gizle
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        // Tab Switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+                button.classList.add('active');
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
         });
-    })
-    .catch(error => {
-        console.error("Parktaki araçları getirirken bir hata oluştu:", error);
-    });
-}
 
-// Üyeleri getirme fonksiyonu
-function getAllMembers() {
-    fetch('/all_members')
-    .then(response => response.json())
-    .then(data => {
-        const list = document.getElementById('memberList');
-        list.innerHTML = '';  // Eski listeleri temizle
-        
-        if (data.length === 0) {
-            list.innerHTML = '<li>Kayıtlı üye bulunmamaktadır.</li>';
-            return;
+        // Karanlık Mod Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun toggle-icon"></i>';
         }
 
-        // Admin olmayan üyeleri filtrele ve listele
-        data.forEach((member, index) => {
-            if (!member.is_admin) {
-                let li = document.createElement('li');
-                li.textContent = `${index + 1}. Kullanıcı: ${member.username}, TC: ${member.tc}`;
-                list.appendChild(li);
-            }
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun toggle-icon"></i>' : '<i class="fas fa-moon toggle-icon"></i>';
+            localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
         });
-    })
-    .catch(error => {
-        console.error("Üyeleri getirirken bir hata oluştu:", error);
-    });
-}
-
 
         // Sayfa yüklendiğinde verileri güncelleme
         function refreshData() {
+            updateParkingInfo();
             getCurrentParking();
             getAllMembers();
         }
 
-        // Sayfa yüklendiğinde refreshData fonksiyonunu çağır
         window.onload = refreshData;
     </script>
-</head>
-<body>
-    <h1>**ADMIN PANEL**</h1>
-    
-    <div class="container">
-        <h2>Saatlik Ücret Belirleme</h2>
-        <h3 id="currentPrice">Saatlik Ücret: 0 TL</h3>
-        <input type="number" id="hourlyRate" placeholder="Yeni saatlik ücret">
-        <button onclick="setPrice()">Fiyatı Güncelle</button>
-        <p id="priceMessage"></p>
-
-        <h2>Anlık Otopark Durumu</h2>
-        <button onclick="getCurrentParking()">Güncelle</button>
-        <ul id="parkingList"></ul>
-
-        <h2>Bütün Üyeler</h2>
-        <button onclick="getAllMembers()">Üyeleri Güncelle</button>
-        <ul id="memberList"></ul>
-        <a href="/logout" class="btn btn-danger">Çıkış Yap</a>
-    </div>
 </body>
 </html>

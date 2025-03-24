@@ -3,39 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Otopark Giriş Sayfası</title>
+    <title>Otopark Giriş ve Kayıt Sayfası</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <!-- Google Fonts for Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    
-    <h1>Otopark Sistemi Giriş</h1>
-    
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="Kullanıcı Adı" required>
-        <input type="password" id="password" placeholder="Şifre" required>
-        <button type="submit">Giriş Yap</button>
-    </form>
-    <p id="loginMessage"></p>
-    
-    <h2>Üye Kayıt</h2>
-    <form id="registerForm">
-        <input type="text" id="reg_username" placeholder="Kullanıcı Adı" required>
-        <input type="password" id="reg_password" placeholder="Şifre" required>
-        <input type="text" id="reg_name" placeholder="Adınız" required>
-        <input type="text" id="reg_tc" placeholder="TC Kimlik" required>
-        <button type="submit">Kayıt Ol</button>
-    </form>
-    <p id="registerMessage"></p>
+    <!-- Dark Mode Toggle Button (Sağ Üst Köşede) -->
+    <button id="darkModeToggle" class="dark-mode-toggle"><i class="fas fa-moon toggle-icon"></i></button>
+
+    <!-- Dil Seçeneği (Sağ Üst Köşede) -->
+    <div class="language-selector">
+        <button id="languageButton" class="language-button">
+            <span id="currentLang">TR</span>
+            <i class="fas fa-chevron-down"></i>
+        </button>
+        <ul id="languageList" class="language-list hidden">
+            <li data-lang="tr"><span class="flag flag-tr"></span> TR</li>
+            <li data-lang="en"><span class="flag flag-en"></span> EN</li>
+        </ul>
+    </div>
+
+    <!-- Header with Logo -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-parking"></i> <span class="lang" data-lang-tr="Otopark Sistemi" data-lang-en="Parking System">Otopark Sistemi</span>
+        </div>
+    </header>
+
+    <!-- Canlı Saat ve Tarih -->
+    <div class="datetime-container">
+        <span id="datetime"></span>
+    </div>
+
+    <!-- Login Section -->
+    <section class="form-section">
+        <h1 class="lang" data-lang-tr="Otopark Sistemi Giriş" data-lang-en="Parking System Login">Otopark Sistemi Giriş</h1>
+        <form id="loginForm" class="form">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="Kullanıcı Adı" required aria-label="Kullanıcı Adı">
+                <span class="tooltip lang" data-lang-tr="Kullanıcı adınızı girin" data-lang-en="Enter your username">Kullanıcı adınızı girin</span>
+            </div>
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Şifre" required aria-label="Şifre">
+                <span class="tooltip lang" data-lang-tr="Şifrenizi girin" data-lang-en="Enter your password">Şifrenizi girin</span>
+            </div>
+            <button type="submit"><i class="fas fa-sign-in-alt"></i> <span class="lang" data-lang-tr="Giriş Yap" data-lang-en="Login">Giriş Yap</span> <span class="spinner hidden"></span></button>
+        </form>
+        <p id="loginMessage" class="message"></p>
+    </section>
+
+    <!-- Registration Section -->
+    <section class="form-section">
+        <h2 class="lang" data-lang-tr="Üye Kayıt" data-lang-en="Register">Üye Kayıt</h2>
+        <form id="registerForm" class="form">
+            <div class="input-grid">
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="reg_username" placeholder="Kullanıcı Adı" required aria-label="Kullanıcı Adı">
+                    <span class="tooltip lang" data-lang-tr="Kullanıcı adınızı girin" data-lang-en="Enter your username">Kullanıcı adınızı girin</span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="reg_password" placeholder="Şifre" required aria-label="Şifre">
+                    <span class="tooltip lang" data-lang-tr="Şifrenizi girin" data-lang-en="Enter your password">Şifrenizi girin</span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-car"></i>
+                    <input type="text" id="reg_name" placeholder="Araba Markası" required aria-label="Araba Markası">
+                    <span class="tooltip lang" data-lang-tr="Araba markasını girin (ör. Toyota)" data-lang-en="Enter car brand (e.g., Toyota)">Araba markasını girin (ör. Toyota)</span>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-id-card"></i>
+                    <input type="text" id="reg_tc" placeholder="TC Kimlik" required aria-label="TC Kimlik">
+                    <span class="tooltip lang" data-lang-tr="11 haneli TC kimlik numaranızı girin" data-lang-en="Enter your 11-digit TC ID">11 haneli TC kimlik numaranızı girin</span>
+                </div>
+            </div>
+            <button type="submit"><i class="fas fa-user-plus"></i> <span class="lang" data-lang-tr="Kayıt Ol" data-lang-en="Register">Kayıt Ol</span> <span class="spinner hidden"></span></button>
+        </form>
+        <p id="registerMessage" class="message"></p>
+    </section>
+
+    <!-- Info Container with Collapsible Sections -->
+    <div class="info-container">
+        <section class="info-section">
+            <h3 class="info-header"><i class="fas fa-info-circle"></i> <span class="lang" data-lang-tr="Otoparkla Alakalı Bilgiler" data-lang-en="About the Parking">Otoparkla Alakalı Bilgiler</span></h3>
+            <div class="info-content">
+                <p class="lang" data-lang-tr="Bu otopark, şehir merkezinde yer alan modern bir tesistir. 7/24 güvenlik kameralarıyla izlenmekte olup, toplamda 200 araç kapasitesine sahiptir. Otoparkımız, hem günlük hem de aylık abonelik seçenekleri sunmaktadır." data-lang-en="This parking lot is a modern facility located in the city center. It is monitored 24/7 with security cameras and has a total capacity of 200 vehicles. We offer both daily and monthly subscription options.">Bu otopark, şehir merkezinde yer alan modern bir tesistir. 7/24 güvenlik kameralarıyla izlenmekte olup, toplamda 200 araç kapasitesine sahiptir. Otoparkımız, hem günlük hem de aylık abonelik seçenekleri sunmaktadır.</p>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h3 class="info-header"><i class="fas fa-car-side"></i> <span class="lang" data-lang-tr="Otoparka Girebilecek Arabalar" data-lang-en="Vehicles Allowed in the Parking">Otoparka Girebilecek Arabalar</span></h3>
+            <div class="info-content">
+                <p class="lang" data-lang-tr="Otoparkımız, sedan, hatchback, SUV ve hafif ticari araçlar gibi standart boyutlardaki araçları kabul etmektedir. Ancak, kamyon, otobüs veya yüksekliği 2 metreyi aşan araçlar için giriş izni verilmemektedir." data-lang-en="Our parking lot accepts standard-sized vehicles such as sedans, hatchbacks, SUVs, and light commercial vehicles. However, trucks, buses, or vehicles taller than 2 meters are not allowed.">Otoparkımız, sedan, hatchback, SUV ve hafif ticari araçlar gibi standart boyutlardaki araçları kabul etmektedir. Ancak, kamyon, otobüs veya yüksekliği 2 metreyi aşan araçlar için giriş izni verilmemektedir.</p>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h3 class="info-header"><i class="fas fa-money-bill-wave"></i> <span class="lang" data-lang-tr="Otopark Ücret Bilgileri" data-lang-en="Parking Fee Information">Otopark Ücret Bilgileri</span></h3>
+            <div class="info-content">
+                <p class="lang" data-lang-tr="Saatlik Ücret: 25 TL" data-lang-en="Hourly Fee: 10 TL">Saatlik Ücret: 25 TL</p>
+                <p class="lang" data-lang-tr="Siz yoksanız bir kişi eksiğiz!" data-lang-en="Without you, we are one person short!">Siz yoksanız bir kişi eksiğiz!</p>
+            </div>
+        </section>
+
+        <section class="info-section">
+            <h3 class="info-header"><i class="fas fa-address-card"></i> <span class="lang" data-lang-tr="Otoparkla İletişim Bilgileri" data-lang-en="Contact Information">Otoparkla İletişim Bilgileri</span></h3>
+            <div class="info-content">
+                <p class="lang" data-lang-tr="Adres: Örnek Mahallesi, Park Sokak No: 15, İstanbul" data-lang-en="Address: Örnek Mahallesi, Park Sokak No: 15, Istanbul">Adres: Örnek Mahallesi, Park Sokak No: 15, İstanbul</p>
+                <p class="lang" data-lang-tr="Telefon: +90 555 123 45 67" data-lang-en="Phone: +90 555 123 45 67">Telefon: +90 555 123 45 67</p>
+                <p class="lang" data-lang-tr="E-posta: info@ornekotopark.com" data-lang-en="Email: info@ornekotopark.com">E-posta: info@ornekotopark.com</p>
+                <p class="lang" data-lang-tr="Çalışma Saatleri: 7/24 Açık" data-lang-en="Working Hours: 24/7 Open">Çalışma Saatleri: 7/24 Açık</p>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.318389315!2d29.034!3d41.008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDEwMDgnNDEiTiAyOcKwMDInMDQuMCJF!5e0!3m2!1str!2str!4v1698777600000!5m2!1str!2str" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <!-- Geri Bildirim Formu -->
+        <section class="info-section">
+            <h3 class="info-header"><i class="fas fa-comment"></i> <span class="lang" data-lang-tr="Geri Bildirim Formu" data-lang-en="Feedback Form">Geri Bildirim Formu</span></h3>
+            <div class="info-content">
+                <form id="feedbackForm" class="form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="feedbackName" placeholder="Adınız" required aria-label="Adınız">
+                        <span class="tooltip lang" data-lang-tr="Adınızı girin" data-lang-en="Enter your name">Adınızı girin</span>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="feedbackEmail" placeholder="E-posta" required aria-label="E-posta">
+                        <span class="tooltip lang" data-lang-tr="E-posta adresinizi girin" data-lang-en="Enter your email">E-posta adresinizi girin</span>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-comment"></i>
+                        <textarea id="feedbackMessage" placeholder="Mesajınız" required aria-label="Mesajınız" rows="4"></textarea>
+                        <span class="tooltip lang" data-lang-tr="Geri bildiriminizi yazın" data-lang-en="Write your feedback">Geri bildiriminizi yazın</span>
+                    </div>
+                    <button type="submit"><i class="fas fa-paper-plane"></i> <span class="lang" data-lang-tr="Gönder" data-lang-en="Send">Gönder</span> <span class="spinner hidden"></span></button>
+                </form>
+                <p id="feedbackMessage" class="message"></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Canlı Destek Butonu -->
+    <div class="live-support">
+        <button id="supportButton"><i class="fas fa-comment-dots"></i> <span class="lang" data-lang-tr="Canlı Destek" data-lang-en="Live Support">Canlı Destek</span></button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4 class="lang" data-lang-tr="İletişim Bilgileri" data-lang-en="Contact Information">İletişim Bilgileri</h4>
+                <p class="lang" data-lang-tr="Adres: Örnek Mahallesi, Park Sokak No: 15, İstanbul" data-lang-en="Address: Örnek Mahallesi, Park Sokak No: 15, Istanbul">Adres: Örnek Mahallesi, Park Sokak No: 15, İstanbul</p>
+                <p class="lang" data-lang-tr="Telefon: +90 555 123 45 67" data-lang-en="Phone: +90 555 123 45 67">Telefon: +90 555 123 45 67</p>
+                <p class="lang" data-lang-tr="E-posta: info@ornekotopark.com" data-lang-en="Email: info@ornekotopark.com">E-posta: info@ornekotopark.com</p>
+            </div>
+            <div class="footer-section">
+                <h4 class="lang" data-lang-tr="Bizi Takip Edin" data-lang-en="Follow Us">Bizi Takip Edin</h4>
+                <div class="social-links">
+                    <a href="https://twitter.com/intent/tweet?text=Bu harika otoparkı keşfedin!&url=https://ornekotopark.com" target="_blank" class="social-icon twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="https://api.whatsapp.com/send?text=Bu harika otoparkı keşfedin! https://ornekotopark.com" target="_blank" class="social-icon whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=https://ornekotopark.com" target="_blank" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="lang" data-lang-tr="© 2025 Otopark Sistemi. Tüm hakları saklıdır." data-lang-en="© 2025 Parking System. All rights reserved.">© 2025 Otopark Sistemi. Tüm hakları saklıdır.</p>
+        </div>
+    </footer>
 
     <script>
+        // Karanlık mod tercihini kontrol et
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('darkModeToggle').innerHTML = '<i class="fas fa-sun toggle-icon"></i>';
+        }
+
+        // Dil Değiştirme Fonksiyonu
+        function changeLanguage(lang) {
+            document.querySelectorAll('.lang').forEach(element => {
+                element.textContent = element.getAttribute(`data-lang-${lang}`);
+            });
+            document.getElementById('currentLang').textContent = lang.toUpperCase();
+            localStorage.setItem('language', lang);
+            updateDateTime(); // Tarih ve saati güncelle
+        }
+
+        // Dil Seçeneği Butonu ve Listesi
+        const languageButton = document.getElementById('languageButton');
+        const languageList = document.getElementById('languageList');
+        languageButton.addEventListener('click', () => {
+            languageList.classList.toggle('hidden');
+        });
+
+        document.querySelectorAll('.language-list li').forEach(item => {
+            item.addEventListener('click', () => {
+                const lang = item.getAttribute('data-lang');
+                changeLanguage(lang);
+                languageList.classList.add('hidden');
+            });
+        });
+
+        // Sayfaya ilk yüklendiğinde dil tercihini kontrol et
+        const savedLang = localStorage.getItem('language') || 'tr';
+        changeLanguage(savedLang);
+
+        // Canlı Saat ve Tarih
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const lang = localStorage.getItem('language') || 'tr';
+            document.getElementById('datetime').textContent = now.toLocaleString(lang === 'tr' ? 'tr-TR' : 'en-US', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Giriş Formu
         document.getElementById('loginForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            
+            const button = this.querySelector('button');
+            const spinner = button.querySelector('.spinner');
+            spinner.classList.remove('hidden');
+            button.disabled = true;
             const data = {
                 username: document.getElementById('username').value,
                 password: document.getElementById('password').value
             };
-            
             fetch('/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -43,23 +244,34 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('loginMessage').innerText = data.message;
+                spinner.classList.add('hidden');
+                button.disabled = false;
+                const messageElement = document.getElementById('loginMessage');
+                messageElement.innerText = data.message;
                 if (data.success) {
+                    messageElement.classList.add('success');
+                    messageElement.classList.remove('error');
                     window.location.href = data.redirect;
+                } else {
+                    messageElement.classList.add('error');
+                    messageElement.classList.remove('success');
                 }
             });
         });
-        
+
+        // Kayıt Formu
         document.getElementById('registerForm').addEventListener('submit', function(event) {
             event.preventDefault();
-            
+            const button = this.querySelector('button');
+            const spinner = button.querySelector('.spinner');
+            spinner.classList.remove('hidden');
+            button.disabled = true;
             const data = {
                 username: document.getElementById('reg_username').value,
                 password: document.getElementById('reg_password').value,
                 name: document.getElementById('reg_name').value,
                 tc: document.getElementById('reg_tc').value
             };
-            
             fetch('/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -67,8 +279,62 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById('registerMessage').innerText = data.message;
+                spinner.classList.add('hidden');
+                button.disabled = false;
+                const messageElement = document.getElementById('registerMessage');
+                messageElement.innerText = data.message;
+                if (data.success) {
+                    messageElement.classList.add('success');
+                    messageElement.classList.remove('error');
+                } else {
+                    messageElement.classList.add('error');
+                    messageElement.classList.remove('success');
+                }
             });
+        });
+
+        // Geri Bildirim Formu
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const button = this.querySelector('button');
+            const spinner = button.querySelector('.spinner');
+            spinner.classList.remove('hidden');
+            button.disabled = true;
+            const lang = localStorage.getItem('language') || 'tr';
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                button.disabled = false;
+                const messageElement = document.getElementById('feedbackMessage');
+                messageElement.innerText = lang === 'tr' ? 'Geri bildiriminiz için teşekkürler!' : 'Thank you for your feedback!';
+                messageElement.classList.add('success');
+                messageElement.classList.remove('error');
+                this.reset();
+            }, 1000);
+        });
+
+        // Bilgi Bölümleri için Açılır/Kapanır Özellik
+        document.querySelectorAll('.info-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const section = header.parentElement;
+                section.classList.toggle('active');
+                content.style.maxHeight = section.classList.contains('active') ? content.scrollHeight + 'px' : '0';
+            });
+        });
+
+        // Karanlık Mod Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            darkModeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun toggle-icon"></i>' : '<i class="fas fa-moon toggle-icon"></i>';
+            localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+        });
+
+        // Canlı Destek Butonu
+        document.getElementById('supportButton').addEventListener('click', () => {
+            const lang = localStorage.getItem('language') || 'tr';
+            alert(lang === 'tr' ? 'Canlı destek ekibimizle iletişime geçmek için lütfen bizimle iletişime geçin: info@ornekotopark.com' : 'To contact our live support team, please reach out to us at: info@ornekotopark.com');
         });
     </script>
 </body>

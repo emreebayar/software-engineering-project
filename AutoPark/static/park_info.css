@@ -1,110 +1,240 @@
-/* Genel Ayarlar ve Sıfırlama */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
 }
 
 body {
-    background-color: #f4f7fa;
-    color: #333;
-    line-height: 1.6;
-    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #2a2a72, #009ffd, #a1c4fd);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    overflow: hidden;
+    position: relative;
 }
 
-/* Container */
-.container {
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(0, 0, 0, 0.25) 100%);
+    animation: pulse 12s infinite ease-in-out;
+    z-index: -1;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.7; }
+}
+
+.page-container {
     width: 100%;
     max-width: 600px;
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: left;
+    padding: 20px;
+    position: relative;
 }
 
-/* Başlık */
-h1 {
-    color: #3498db;
-    margin-bottom: 20px;
-    font-size: 2rem;
+.card {
+    background: #fff;
+    border-radius: 25px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+}
+
+.animate-in {
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-header {
+    padding: 35px;
     text-align: center;
+    background: linear-gradient(135deg, #f0f4f8, #dfe4ea);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-/* Bilgi Alanları */
+.card-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2a2a72;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header h1 i {
+    margin-right: 12px;
+    color: #009ffd;
+    font-size: 34px;
+}
+
+.header-text {
+    font-size: 16px;
+    font-weight: 400;
+    color: #6b7280;
+    opacity: 0.9;
+}
+
+.card-content {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
 .info-section {
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
 }
 
-.info-section p {
-    font-size: 1.1rem;
-    color: #555;
-    margin: 10px 0;
+.info-card {
+    background: linear-gradient(135deg, #ffffff, #f1f3f5);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.info-section p strong {
-    color: #333;
-    font-weight: bold;
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 159, 253, 0.2);
 }
 
-/* Özel Bilgi Alanları */
+.info-card i {
+    font-size: 28px;
+    color: #009ffd;
+    margin-bottom: 10px;
+}
+
+.info-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2a2a72;
+    margin-bottom: 8px;
+}
+
+.info-card p {
+    font-size: 18px;
+    font-weight: 500;
+    color: #4b5563;
+}
+
 .parking-info {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #eee;
-    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
 }
 
-.parking-info p {
-    font-size: 1rem;
-    color: #555;
-    margin: 8px 0;
+.highlight-card {
+    flex: 1;
+    background: linear-gradient(135deg, #009ffd, #2a2a72);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    color: #fff;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.parking-info p strong {
-    color: #333;
-    font-weight: bold;
+.highlight-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 159, 253, 0.4);
+}
+
+.highlight-card i {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.highlight-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.highlight-card p {
+    font-size: 20px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.card-footer {
+    padding: 30px;
+    text-align: center;
+    background: linear-gradient(135deg, #f0f4f8, #dfe4ea);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.btn-logout {
+    display: inline-block;
+    padding: 14px 35px;
+    background: linear-gradient(135deg, #ff6b6b, #e03131);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-logout i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.btn-logout:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
 }
 
 /* Responsive Tasarım */
 @media (max-width: 768px) {
-    body {
-        padding: 10px;
+    .page-container {
+        max-width: 450px;
     }
 
-    .container {
+    .card-header h1 {
+        font-size: 26px;
+    }
+
+    .info-section {
+        grid-template-columns: 1fr;
+    }
+
+    .parking-info {
+        flex-direction: column;
+    }
+
+    .highlight-card {
         padding: 20px;
     }
 
-    h1 {
-        font-size: 1.8rem;
+    .btn-logout {
+        padding: 12px 25px;
+        font-size: 14px;
     }
-
-    .info-section p {
-        font-size: 1rem;
-    }
-
-    .parking-info p {
-        font-size: 0.9rem;
-    }
-}
-
-.btn-danger {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 15px;
-    background-color: #dc3545;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
 }

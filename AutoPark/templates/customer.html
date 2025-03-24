@@ -3,14 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Müşteri Kayıt</title>
+    <title>Müşteri Araç Kayıt</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
+        function validatePlate(plate) {
+            const plateRegex = /^[0-9]{2}\s[A-Z]{1,3}\s[0-9]{2,4}$/;
+            return plateRegex.test(plate);
+        }
+
+        function checkPlateInput() {
+            const plateInput = document.getElementById('licensePlate');
+            const isValid = validatePlate(plateInput.value);
+            plateInput.classList.toggle('valid', isValid);
+            plateInput.classList.toggle('invalid', !isValid && plateInput.value.length > 0);
+        }
+
         function registerCustomer() {
             const plate = document.getElementById('licensePlate').value;
             const carType = document.getElementById('carType').value;
             const fuelType = document.getElementById('fuelType').value;
-            
+            const submitBtn = document.querySelector('.btn-primary');
+
+            if (!validatePlate(plate)) {
+                document.getElementById('message').innerText = 'Geçersiz plaka formatı!';
+                return;
+            }
+
+            submitBtn.classList.add('loading');
             fetch('/register_car', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
@@ -18,37 +39,76 @@
             })
             .then(response => response.json())
             .then(data => {
+                submitBtn.classList.remove('loading');
                 document.getElementById('message').innerText = data.message;
+                if (data.message.includes('başarıyla')) {
+                    document.querySelector('.progress-bar').style.width = '100%';
+                }
+            })
+            .catch(error => {
+                submitBtn.classList.remove('loading');
+                document.getElementById('message').innerText = 'Hata: Kayıt başarısız. Tekrar deneyin.';
             });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
         }
     </script>
 </head>
 <body>
-    <div class="container" style="width: 500px; margin: auto; text-align: center;">
-        <h1>Müşteri Araç Bilgileri</h1>
-        <input type="text" id="licensePlate" placeholder="Araç Plakanız">
-
-        <h3 style="font-size: 20px; text-align: center; margin-top: 20px; margin-bottom: 10px;">Araç Tipi</h3>
-        <select id="carType">
-            <option value="">Lütfen Seçiniz</option>
-            <option value="Otomobil">Otomobil</option>
-            <option value="Motosiklet">Motosiklet</option>
-            <option value="Kamyon">Kamyon</option>
-        </select>
-
-        <h3 style="font-size: 20px; text-align: center; margin-top: 20px; margin-bottom: 10px;">Yakıt Tipi</h3>
-        <select id="fuelType">
-            <option value="">Lütfen Seçiniz</option>
-            <option value="Benzin">Benzin</option>
-            <option value="Dizel">Dizel</option>
-            <option value="LPG-CNG">LPG-CNG</option>
-            <option value="Elektrik">Elektrik</option>
-        </select>
-
-        <button onclick="registerCustomer()">Bilgileri Kaydet</button>
-        <button onclick="window.location.href='/parking_info'">Park Bilgisi</button>
-        <p id="message"></p>
-        <a href="/logout" class="btn btn-danger">Çıkış Yap</a>
+    <div class="page-container">
+        <div class="card">
+            <header class="card-header">
+                <h1><i class="fas fa-car-alt"></i> Araç Kayıt</h1>
+                <p class="header-text">Şık ve hızlı bir şekilde kaydolun</p>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </header>
+            <form class="form" onsubmit="event.preventDefault(); registerCustomer();">
+                <div class="form-field">
+                    <label for="licensePlate"><i class="fas fa-id-card"></i> Plaka</label>
+                    <input type="text" id="licensePlate" placeholder="34 ABC 123" required oninput="checkPlateInput()">
+                </div>
+                <div class="form-field">
+                    <label for="carType"><i class="fas fa-car"></i> Araç Türü</label>
+                    <select id="carType" required>
+                        <option value="" disabled selected>Seçiniz</option>
+                        <option value="Otomobil">Otomobil</option>
+                        <option value="Motosiklet">Motosiklet</option>
+                        <option value="Kamyon">Kamyon</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label for="fuelType"><i class="fas fa-gas-pump"></i> Yakıt Türü</label>
+                    <select id="fuelType" required>
+                        <option value="" disabled selected>Seçiniz</option>
+                        <option value="Benzin">Benzin</option>
+                        <option value="Dizel">Dizel</option>
+                        <option value="LPG-CNG">LPG-CNG</option>
+                        <option value="Elektrik">Elektrik</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" data-tooltip="Araç bilgilerini kaydet">
+                        <i class="fas fa-save"></i> Kaydet
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/parking_info'" data-tooltip="Park bilgilerini görüntüle">
+                        <i class="fas fa-parking"></i> Park Bilgisi
+                    </button>
+                </div>
+                <p id="message" class="form-message"></p>
+            </form>
+            <footer class="card-footer">
+                <button type="button" class="btn btn-toggle" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon"></i> Tema
+                </button>
+                <a href="/logout" class="btn btn-logout" data-tooltip="Oturumu kapat">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                </a>
+            </footer>
+        </div>
     </div>
 </body>
 </html>

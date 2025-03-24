@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='park_info.css') }}">
     <title>Park Bilgisi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='park_info.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
         function startTimer(entryTime) {
             let hourlyRate = 50; // Varsayılan fiyat
-            // Sunucudan güncel fiyatı al
+
             function fetchPrice() {
                 fetch("/get_price")
                     .then(response => response.json())
@@ -17,9 +19,7 @@
                             hourlyRate = data.hourly_rate;
                         }
                     })
-                    .catch(error => {
-                        console.error("Fiyat alınırken hata oluştu:", error);
-                    });
+                    .catch(error => console.error("Fiyat alınırken hata oluştu:", error));
             }
 
             function updateTimer() {
@@ -31,26 +31,55 @@
                 document.getElementById("fee").innerText = fee.toFixed(2) + " TL";
             }
 
-            setInterval(updateTimer, 1000);  // Süreyi her saniye güncelle
-            setInterval(fetchPrice, 10000);  // Fiyatı her 10 saniyede bir güncelle
-            fetchPrice();  // İlk fiyatı anında çek
-            updateTimer(); // İlk süreyi anında hesapla
+            setInterval(updateTimer, 1000);
+            setInterval(fetchPrice, 10000);
+            fetchPrice();
+            updateTimer();
         }
     </script>
 </head>
 <body onload="startTimer(Number('{{ entry_time }}'))">
-    <div class="container">
-        <h1>Otopark Bilgileri</h1>
-        <div class="info-section">
-            <p><strong>Plaka:</strong> {{ plate }}</p>
-            <p><strong>Park Sırası:</strong> {{ park_sirasi }}</p>
-            <p><strong>Otopark Katı:</strong> {{ otopark_kati }}</p>
+    <div class="page-container">
+        <div class="card animate-in">
+            <header class="card-header">
+                <h1><i class="fas fa-parking"></i> Park Durumunuz</h1>
+                <p class="header-text">Araç bilgileriniz bir bakışta!</p>
+            </header>
+            <div class="card-content">
+                <div class="info-section">
+                    <div class="info-card">
+                        <i class="fas fa-id-card fa-2x"></i>
+                        <h3>Plaka</h3>
+                        <p>{{ plate }}</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-map-marker-alt fa-2x"></i>
+                        <h3>Park Sırası</h3>
+                        <p>{{ park_sirasi }}</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-layer-group fa-2x"></i>
+                        <h3>Otopark Katı</h3>
+                        <p>{{ otopark_kati }}</p>
+                    </div>
+                </div>
+                <div class="parking-info">
+                    <div class="highlight-card">
+                        <i class="fas fa-clock fa-2x"></i>
+                        <h3>Geçen Süre</h3>
+                        <p><span id="duration">0.00 saat</span></p>
+                    </div>
+                    <div class="highlight-card">
+                        <i class="fas fa-lira-sign fa-2x"></i>
+                        <h3>Ücret</h3>
+                        <p><span id="fee">0 TL</span></p>
+                    </div>
+                </div>
+            </div>
+            <footer class="card-footer">
+                <a href="/logout" class="btn btn-logout"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+            </footer>
         </div>
-        <div class="parking-info">
-            <p><strong>Geçen Süre:</strong> <span id="duration">0.00 saat</span></p>
-            <p><strong>Ücret:</strong> <span id="fee">0 TL</span></p>
-        </div>
-        <a href="/logout" class="btn btn-danger">Çıkış Yap</a>
     </div>
 </body>
 </html>
