@@ -11,12 +11,22 @@
         function startTimer(entryTime) {
             let hourlyRate = 50; // Varsayılan fiyat
 
+            // Fiyatı getiren fonksiyon
             function fetchPrice() {
                 fetch("/get_price")
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Fiyat alınamadı, HTTP durumu: " + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.hourly_rate) {
-                            hourlyRate = data.hourly_rate;
+                            hourlyRate = parseInt(data.hourly_rate); // Fiyatı tam sayı olarak al
+                            console.log("Güncel saatlik ücret:", hourlyRate); // Hata ayıklama için
+                            updateTimer(); // Fiyat güncellendiğinde ücreti hemen hesapla
+                        } else {
+                            console.error("Fiyat bilgisi alınamadı:", data);
                         }
                     })
                     .catch(error => console.error("Fiyat alınırken hata oluştu:", error));
@@ -24,17 +34,39 @@
 
             function updateTimer() {
                 let currentTime = Math.floor(Date.now() / 1000);
-                let duration = (currentTime - entryTime) / 3600;
-                document.getElementById("duration").innerText = duration.toFixed(2) + " saat";
-                
-                let fee = Math.max(0, (duration - 2) * hourlyRate);
-                document.getElementById("fee").innerText = fee.toFixed(2) + " TL";
+                let durationSeconds = currentTime - entryTime; // Süreyi saniye cinsinden al
+                let durationMinutes = Math.floor(durationSeconds / 60); // Dakikaya çevir
+                let hours = Math.floor(durationMinutes / 60); // Saat
+                let minutes = durationMinutes % 60; // Kalan dakikalar
+
+                // Süreyi formatla
+                let durationText;
+                if (hours >= 1) {
+                    // 1 saat ve üzeri: "X saat Y dakika"
+                    durationText = `${hours} saat`;
+                    if (minutes > 0) {
+                        durationText += ` ${minutes} dakika`;
+                    }
+                } else {
+                    // 1 saatten az: sadece dakika
+                    durationText = `${durationMinutes} dakika`;
+                }
+                document.getElementById("duration").innerText = durationText;
+
+                // Ücreti dakika bazlı ve tam sayı olarak hesapla
+                let fee = 0;
+                if (durationMinutes > 30) { // İlk 30 dakika ücretsiz
+                    let chargeableMinutes = durationMinutes - 30; // Ücretlendirilecek dakikalar
+                    let minuteRate = hourlyRate / 60; // Dakika başına ücret
+                    fee = Math.round(chargeableMinutes * minuteRate); // Tam sayıya yuvarla
+                }
+                document.getElementById("fee").innerText = fee + " TL";
             }
 
-            setInterval(updateTimer, 1000);
-            setInterval(fetchPrice, 10000);
+            // İlk fiyatı hemen al ve ardından 5 saniyede bir kontrol et
             fetchPrice();
-            updateTimer();
+            setInterval(fetchPrice, 5000); // 5 saniyede bir fiyatı kontrol et
+            setInterval(updateTimer, 1000); // Her saniye süreyi ve ücreti güncelle
         }
     </script>
 </head>
@@ -67,7 +99,7 @@
                     <div class="highlight-card">
                         <i class="fas fa-clock fa-2x"></i>
                         <h3>Geçen Süre</h3>
-                        <p><span id="duration">0.00 saat</span></p>
+                        <p><span id="duration">0 dakika</span></p>
                     </div>
                     <div class="highlight-card">
                         <i class="fas fa-lira-sign fa-2x"></i>

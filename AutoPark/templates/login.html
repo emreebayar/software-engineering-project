@@ -73,9 +73,9 @@
                     <span class="tooltip lang" data-lang-tr="Şifrenizi girin" data-lang-en="Enter your password">Şifrenizi girin</span>
                 </div>
                 <div class="input-group">
-                    <i class="fas fa-car"></i>
-                    <input type="text" id="reg_name" placeholder="Araba Markası" required aria-label="Araba Markası">
-                    <span class="tooltip lang" data-lang-tr="Araba markasını girin (ör. Toyota)" data-lang-en="Enter car brand (e.g., Toyota)">Araba markasını girin (ör. Toyota)</span>
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="reg_phone" placeholder="Telefon No" required aria-label="Telefon No" pattern="[0-9]{11}" maxlength="11">
+                    <span class="tooltip lang" data-lang-tr="Telefon numaranızı girin (ör. 05556667788)" data-lang-en="Enter your phone number (e.g., 05556667788)">Telefon numaranızı girin (ör. 05556667788)</span>
                 </div>
                 <div class="input-group">
                     <i class="fas fa-id-card"></i>
@@ -108,7 +108,7 @@
             <h3 class="info-header"><i class="fas fa-money-bill-wave"></i> <span class="lang" data-lang-tr="Otopark Ücret Bilgileri" data-lang-en="Parking Fee Information">Otopark Ücret Bilgileri</span></h3>
             <div class="info-content">
                 <p class="lang" data-lang-tr="Saatlik Ücret: 25 TL" data-lang-en="Hourly Fee: 10 TL">Saatlik Ücret: 25 TL</p>
-                <p class="lang" data-lang-tr="Siz yoksanız bir kişi eksiğiz!" data-lang-en="Without you, we are one person short!">Siz yoksanız bir kişi eksiğiz!</p>
+                <p class="lang" data-lang-tr="İlk 30 dakika ücretsiz park imkanı!" data-lang-en="Free parking for the first 30 minutes!">İlk 30 dakika ücretsiz park imkanı!</p>
             </div>
         </section>
 
@@ -247,7 +247,12 @@
                 spinner.classList.add('hidden');
                 button.disabled = false;
                 const messageElement = document.getElementById('loginMessage');
-                messageElement.innerText = data.message;
+                const lang = localStorage.getItem('language') || 'tr';
+                let message = data.message;
+                if (message === "Invalid credentials") {
+                    message = lang === 'tr' ? "Geçersiz kimlik bilgileri" : "Invalid credentials";
+                }
+                messageElement.innerText = message;
                 if (data.success) {
                     messageElement.classList.add('success');
                     messageElement.classList.remove('error');
@@ -269,7 +274,7 @@
             const data = {
                 username: document.getElementById('reg_username').value,
                 password: document.getElementById('reg_password').value,
-                name: document.getElementById('reg_name').value,
+                phone: document.getElementById('reg_phone').value,
                 tc: document.getElementById('reg_tc').value
             };
             fetch('/register', {
@@ -282,7 +287,19 @@
                 spinner.classList.add('hidden');
                 button.disabled = false;
                 const messageElement = document.getElementById('registerMessage');
-                messageElement.innerText = data.message;
+                const lang = localStorage.getItem('language') || 'tr';
+
+                // Hata mesajlarını dil desteğiyle eşleştir
+                let message = data.message;
+                if (message === "Bu kullanıcı adı zaten alınmış.") {
+                    message = lang === 'tr' ? "Bu kullanıcı adı zaten alınmış." : "This username is already taken.";
+                } else if (message === "Bu TC kimlik numarası zaten kayıtlı.") {
+                    message = lang === 'tr' ? "Bu TC kimlik numarası zaten kayıtlı." : "This TC ID is already registered.";
+                } else if (message === "Kayıt başarılı. Giriş yapabilirsiniz.") {
+                    message = lang === 'tr' ? "Kayıt başarılı. Giriş yapabilirsiniz." : "Registration successful. You can now log in.";
+                }
+
+                messageElement.innerText = message;
                 if (data.success) {
                     messageElement.classList.add('success');
                     messageElement.classList.remove('error');
@@ -291,6 +308,13 @@
                     messageElement.classList.remove('success');
                 }
             });
+        });
+
+        // Telefon numarası formatlama ve yalnızca sayı girişi
+        document.getElementById('reg_phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Sadece rakamları al
+            if (value.length > 11) value = value.slice(0, 11); // 11 rakam sınırı
+            e.target.value = value; // Boşluk eklemeden direkt değeri kullan
         });
 
         // Geri Bildirim Formu

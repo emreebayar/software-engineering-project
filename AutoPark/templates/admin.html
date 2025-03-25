@@ -83,9 +83,11 @@
                             <tr>
                                 <th>#</th>
                                 <th>Plaka</th>
-                                <th>Sahip</th>
+                                <th>Telefon No</th>
                                 <th>Park Sırası</th>
                                 <th>Kat</th>
+                                <th>Geçen Süre (dakika)</th> <!-- Yeni sütun -->
+                                <th>Ücret</th>
                             </tr>
                         </thead>
                         <tbody id="parkingList"></tbody>
@@ -158,10 +160,10 @@
 
         // Park bilgilerini güncelleyen fonksiyon
         function updateParkingInfo() {
-            fetch('/parking_info')
+            fetch('/get_price')
             .then(response => response.json())
             .then(data => {
-                document.getElementById('currentPrice').innerText = `Saatlik Ücret: ${data.fee} TL`;
+                document.getElementById('currentPrice').innerText = `Saatlik Ücret: ${data.hourly_rate} TL`;
             })
             .catch(error => {
                 console.error("Park bilgisi güncellenirken hata oluştu:", error);
@@ -183,7 +185,7 @@
                 list.innerHTML = '';
 
                 if (data.length === 0) {
-                    list.innerHTML = '<tr><td colspan="5" class="empty">Otoparkta araç bulunmamaktadır.</td></tr>';
+                    list.innerHTML = '<tr><td colspan="7" class="empty">Otoparkta araç bulunmamaktadır.</td></tr>';
                 } else {
                     data.forEach((car, index) => {
                         let tr = document.createElement('tr');
@@ -193,6 +195,8 @@
                             <td>${car.owner}</td>
                             <td>${car.park_sirasi || 'Bilinmiyor'}</td>
                             <td>${car.otopark_kati || 'Bilinmiyor'}</td>
+                            <td>${car.duration_minutes || 'Hesaplanamadı'}</td> <!-- Yeni sütun -->
+                            <td>${car.fee ? car.fee + ' TL' : 'Hesaplanamadı'}</td>
                         `;
                         list.appendChild(tr);
                     });

@@ -75,5 +75,54 @@
         "name": "Berke",
         "tc": "31623512322",
         "is_admin": false
+    },
+    {
+        "username": "der",
+        "password": "der",
+        "name": "der",
+        "tc": "11111111111",
+        "is_admin": false
+    },
+    {
+        "username": "arda",
+        "password": "arda",
+        "name": "arda",
+        "tc": "12345678910",
+        "is_admin": false
+    },
+    {
+        "username": "can",
+        "password": "can",
+        "name": "mersedes",
+        "tc": "12345678910",
+        "is_admin": false
+    },
+    {
+        "username": "meltem",
+        "password": "meltem",
+        "name": "toyota",
+        "tc": "12345678910",
+        "is_admin": false
+    },
+    {
+        "username": "\u015ferif",
+        "password": "\u015ferif",
+        "name": "mercedes",
+        "tc": "12345678912",
+        "is_admin": false
+    },
+    {
+        "username": "kas\u0131m",
+        "password": "kas\u0131m",
+        "name": "0504 078 89 69",
+        "tc": "12345678913",
+        "is_admin": false
+    },
+    {
+        "username": "emre",
+        "password": "emree",
+        "name": null,
+        "tc": "12345678920",
+        "is_admin": false
     }
 ]

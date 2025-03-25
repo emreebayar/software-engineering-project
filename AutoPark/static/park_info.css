@@ -177,6 +177,9 @@ body::before {
     font-size: 20px;
     font-weight: 700;
     transition: all 0.3s ease;
+    white-space: nowrap; /* Metni tek satırda tut */
+    overflow: hidden; /* Taşmayı gizle */
+    text-overflow: ellipsis; /* Taşan metni "..." ile göster */
 }
 
 .card-footer {
@@ -231,6 +234,10 @@ body::before {
 
     .highlight-card {
         padding: 20px;
+    }
+
+    .highlight-card p {
+        font-size: 18px; /* Küçük ekranlarda metni biraz küçült */
     }
 
     .btn-logout {

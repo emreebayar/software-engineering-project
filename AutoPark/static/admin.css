@@ -473,6 +473,7 @@ body.dark-mode .data-table thead {
     font-weight: 600;
     color: #a1c4fd;
     text-align: left;
+    min-width: 100px; /* Her sütunun minimum genişliği */
 }
 
 body.dark-mode .data-table th {
@@ -483,6 +484,8 @@ body.dark-mode .data-table th {
     padding: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     color: #e0e0e0;
+    text-align: left;
+    min-width: 100px; /* Hücrelerin minimum genişliği */
 }
 
 body.dark-mode .data-table td {
@@ -511,6 +514,28 @@ body.dark-mode .data-table tr:hover {
 
 body.dark-mode .data-table .empty {
     color: #718096;
+}
+
+/* Ücret Sütunu için Özel Stil */
+.data-table td:nth-child(7) {
+    text-align: right; /* Ücret sütununu sağa hizala */
+    font-weight: 600; /* Ücretleri biraz daha belirgin yap */
+    color: #a1c4fd; /* Karanlık modda renk */
+}
+
+body.dark-mode .data-table td:nth-child(7) {
+    color: #4a90e2; /* Aydınlık modda renk */
+}
+
+/* Geçen Süre Sütunu için Özel Stil */
+.data-table td:nth-child(6) {
+    text-align: center; /* Geçen süre sütununu ortala */
+    font-weight: 600; /* Süreyi biraz daha belirgin yap */
+    color: #a1c4fd; /* Karanlık modda renk */
+}
+
+body.dark-mode .data-table td:nth-child(6) {
+    color: #4a90e2; /* Aydınlık modda renk */
 }
 
 /* Message */
@@ -596,6 +621,7 @@ body.dark-mode .footer p {
     .data-table td {
         padding: 10px;
         font-size: 0.9rem;
+        min-width: 80px; /* Küçük ekranlarda daha dar sütunlar */
     }
 
     button {

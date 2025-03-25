@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
 import json, os, time
 
-
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # Kullanıcı oturumları için gerekli
 
@@ -28,6 +27,33 @@ def load_parking():
 def save_parking(parking):
     with open(PARKING_FILE, "w", encoding="utf-8") as file:
         json.dump(parking, file, indent=4)
+
+# Boş yerleri bulan yardımcı fonksiyon
+def find_available_spot(parking_data):
+    # Otopark 10 katlı olacak ve her katın kapasitesi 20 araba
+    max_floors = 10
+    max_spots_per_floor = 20
+    occupied_spots = {}
+
+    # Mevcut araçların yerlerini bir sözlükte topla
+    for car in parking_data:
+        floor = car.get("otopark_kati", 1)
+        spot = car.get("park_sirasi", 0)
+        if floor not in occupied_spots:
+            occupied_spots[floor] = set()
+        occupied_spots[floor].add(spot)
+
+    # İlk boş yeri bul (1. kattan 10. kata kadar kontrol et)
+    for floor in range(1, max_floors + 1):
+        if floor not in occupied_spots:
+            return {"otopark_kati": floor, "park_sirasi": 1}  # Eğer kat boşsa, 1. sıradan başla
+        if len(occupied_spots[floor]) < max_spots_per_floor:  # Kat dolu değilse
+            for spot in range(1, max_spots_per_floor + 1):
+                if spot not in occupied_spots[floor]:
+                    return {"otopark_kati": floor, "park_sirasi": spot}
+
+    # Eğer tüm katlar doluysa (10 kat x 20 araba = 200 araba), None döndür
+    return None
 
 @app.route('/')
 def home():
@@ -85,7 +111,6 @@ def set_price():
     except Exception as e:
         return jsonify({"success": False, "message": f"Hata oluştu: {str(e)}"}), 500
 
-
 @app.route("/login", methods=["POST"])
 def login():
     data = request.json
@@ -129,7 +154,6 @@ def logout():
 
     return redirect(url_for("home"))
 
-
 @app.route("/register_car", methods=["POST"])
 def register_car():
     if "username" not in session:
@@ -147,21 +171,27 @@ def register_car():
     
     parking_data = load_parking()
     
+    # Boş bir yer bul
+    available_spot = find_available_spot(parking_data)
+    
+    # Eğer boş yer yoksa (otopark tamamen doluysa), hata döndür
+    if available_spot is None:
+        return jsonify({"success": False, "message": "Otopark tamamen dolu! (10 kat x 20 araba kapasite)"}), 400
+    
     new_entry = {
         "owner": user_name,
         "plate": plate,
         "car_type": car_type,
         "fuel_type": fuel_type,
         "entry_time": timestamp,
-        "park_sirasi": (len(parking_data) + 1) % 10,  # Park sırasını otomatik ver
-        "otopark_kati": (len(parking_data) // 10) + 1  # Katı hesapla (Örnek olarak her 10 araç bir kata ayrılıyor)
+        "park_sirasi": available_spot["park_sirasi"],
+        "otopark_kati": available_spot["otopark_kati"]
     }
     
     parking_data.append(new_entry)
     save_parking(parking_data)
     
     return jsonify({"success": True, "message": "Car registered successfully", "redirect": url_for("parking_info")})
-
 
 @app.route("/parking_info")
 def parking_info():
@@ -176,10 +206,6 @@ def parking_info():
         if "entry_time" not in user_parking:
             return jsonify({"message": "Entry time not found for this record."}), 500
         
-        current_time = time.time()
-        duration = (current_time - user_parking["entry_time"]) / 3600  # Saat cinsine çevir
-        fee = max(0, (duration - 2) * 50)  # İlk 2 saat ücretsiz, sonrası 50 TL/saat
-
         return render_template("park_info.html", 
                                plate=user_parking["plate"], 
                                park_sirasi=user_parking.get("park_sirasi", "Bilinmiyor"),
@@ -203,6 +229,10 @@ def register():
     if any(user["username"] == username for user in users):
         return jsonify({"success": False, "message": "Bu kullanıcı adı zaten alınmış."})
     
+    # TC kimlik numarası kontrolü
+    if any(user["tc"] == tc for user in users):
+        return jsonify({"success": False, "message": "Bu TC kimlik numarası zaten kayıtlı."})
+    
     new_user = {"username": username, "password": password, "name": name, "tc": tc, "is_admin": is_admin}
     users.append(new_user)
     save_users(users)
@@ -222,6 +252,31 @@ def customer_panel():
 @app.route('/current_parking')
 def current_parking():
     parking_lot = load_parking()
+    current_time = time.time()
+    
+    # Saatlik ücreti al
+    hourly_rate = 50  # Varsayılan
+    if parking_lot and isinstance(parking_lot, list) and len(parking_lot) > 0:
+        hourly_rate = parking_lot[0].get("hourly_rate", 50)
+
+    # Her araç için ücreti ve geçen süreyi dakika bazlı hesapla
+    for car in parking_lot:
+        if "entry_time" in car:
+            duration_seconds = current_time - car["entry_time"]  # Saniye cinsinden süre
+            duration_minutes = int(duration_seconds / 60)  # Dakika cinsine çevir (tam sayı)
+            car["duration_minutes"] = duration_minutes  # Geçen süreyi ekle
+
+            # Ücreti hesapla (ilk 30 dakika ücretsiz)
+            if duration_minutes <= 30:
+                car["fee"] = 0
+            else:
+                # 30 dakikadan sonrası için ücreti hesapla
+                chargeable_minutes = duration_minutes - 30
+                # Dakika başına ücreti hesapla (saatlik ücreti 60'a bölerek)
+                minute_rate = hourly_rate / 60
+                # Ücreti tam sayı olarak yuvarla
+                car["fee"] = int(round(chargeable_minutes * minute_rate))
+    
     return jsonify(parking_lot)
 
 @app.route('/all_members')
