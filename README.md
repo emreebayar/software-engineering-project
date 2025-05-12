@@ -1,22 +1,23 @@
-# 📌 Otomark - Akıllı Otopark Yönetim Sistemi
+# AutoPark - Akıllı Otopark Yönetim Sistemi
 
-Otomark, kullanıcıların otopark durumlarını takip etmelerini sağlayan bir otomasyon sistemidir. Flask ile geliştirilmiş olan bu proje, araç giriş-çıkışlarını kaydederek **otopark katı, park sırası, giriş saati ve ücret hesaplaması** gibi bilgileri kullanıcıya sunar. 🚗💨  
-
----
-
-## 📂 Proje İçeriği
-- **Araç Kaydı:** Kullanıcı, araç bilgilerini girerek otoparka kayıt yapabilir.
-- **Otopark Bilgileri:** Kullanıcı, aracının park yeri, kat bilgisi, giriş süresi ve ücret hesaplamasını görebilir.
-- **Dinamik Ücretlendirme:** İlk 2 saat ücretsizdir, sonraki her saat başına 50 TL ücret uygulanır.
-- **JSON Tabanlı Veri Yönetimi:** Araç bilgileri JSON dosyasında saklanır ve güncellenir.
+**AutoPark**, kullanıcıların otopark durumlarını izlemelerini sağlayan bir otomasyon sistemidir. Flask ile geliştirilmiş bu proje, araç giriş-çıkışlarını kaydederek **otopark katı, park sırası, giriş saati ve ücret hesaplaması** gibi bilgileri sunmaktadır.
 
 ---
 
-## 🚀 Kurulum
+## Proje İçeriği
 
-### 1️⃣ Gerekli Bağımlılıkları Yükleyin
+- **Araç Kaydı:** Kullanıcılar, araç bilgilerini girerek otoparka kayıt yapabilirler.
+- **Otopark Bilgileri:** Kullanıcılar, araçlarının park yeri, kat bilgisi, giriş süresi ve ücret hesaplamalarını görüntüleyebilirler.
+- **Dinamik Ücretlendirme:** İlk 2 saat ücretsizdir; sonrasında her saat başına 50 TL ücret uygulanmaktadır.
+- **JSON Tabanlı Veri Yönetimi:** Araç bilgileri JSON formatında saklanmakta ve güncellenmektedir.
 
-Bu projeyi çalıştırmak için aşağıdaki bağımlılıkları yükleyin:
+---
+
+## Kurulum Adımları
+
+### 1. Bağımlılıkların Yüklenmesi
+
+Projeyi çalıştırmadan önce aşağıdaki bağımlılığı yükleyiniz:
 
 ```sh
 pip install flask
@@ -24,15 +25,15 @@ pip install flask
 
 ---
 
-### 2️⃣ Projeyi Çalıştırın
+### 2. Uygulamanın Başlatılması
 
-Aşağıdaki komutu kullanarak Flask sunucusunu başlatın:
+Flask sunucusunu başlatmak için aşağıdaki komutu çalıştırınız:
 
 ```sh
 python main.py
 ```
 
-Sunucu çalıştığında aşağıdaki URL'den erişebilirsiniz:
+Başarılı bir şekilde çalıştırıldığında, uygulamaya aşağıdaki URL üzerinden erişebilirsiniz:
 
 ```
 http://127.0.0.1:5000/
@@ -40,13 +41,13 @@ http://127.0.0.1:5000/
 
 ---
 
-## 🔗 API Uç Noktaları (Endpoints)
+## API Uç Noktaları
 
-### 📌 Araç Kaydetme (`POST /register_car`)
+### Araç Kaydı (`POST /register_car`)
 
-Bu uç nokta, kullanıcının aracını otoparka kaydetmesini sağlar.
+Bu uç nokta, kullanıcıların araçlarını otoparka kaydetmelerine olanak tanır.
 
-- **İstek (JSON Gövdesi)**:
+- **İstek (JSON Gövdesi):**
   ```json
   {
     "plate": "34ABC123",
@@ -55,7 +56,7 @@ Bu uç nokta, kullanıcının aracını otoparka kaydetmesini sağlar.
   }
   ```
 
-- **Yanıt (Başarılı)**:
+- **Yanıt (Başarılı Durum):**
   ```json
   {
     "success": true,
@@ -66,11 +67,11 @@ Bu uç nokta, kullanıcının aracını otoparka kaydetmesini sağlar.
 
 ---
 
-### 📌 Otopark Bilgisi Getirme (`GET /parking_info`)
+### Otopark Bilgilerini Getirme (`GET /parking_info`)
 
-Bu uç nokta, kullanıcının otopark durumunu gösterir.
+Bu uç nokta, otoparktaki mevcut durumu ve araç bilgilerini sunar.
 
-- **Yanıt (Başarılı)**:
+- **Yanıt (Başarılı Durum):**
   ```json
   {
     "plate": "34ABC123",
@@ -83,23 +84,22 @@ Bu uç nokta, kullanıcının otopark durumunu gösterir.
 
 ---
 
-## 🎯 Özelleştirme
+## Özelleştirme
 
-- Ücretlendirme sistemini değiştirmek için **`parking_info`** fonksiyonundaki ücret hesaplama bölümünü güncelleyebilirsiniz.
-- Arayüzü geliştirmek için **`templates/customer.html`** dosyasında değişiklik yapabilirsiniz.
-
----
-
-## 📌 Katkıda Bulunma
-
-Katkıda bulunmak isterseniz:
-1. Bu projeyi `fork` edin. 🍴
-2. Yeni bir dal (branch) oluşturun. 🌿  
-3. Geliştirme yapıp `commit` edin. 🎯  
-4. Pull request gönderin. 🔄  
+- Ücretlendirme sisteminde değişiklik yapmak için **`parking_info`** fonksiyonundaki hesaplama bölümünü düzenleyebilirsiniz.
+- Kullanıcı arayüzünde geliştirme yapmak için **`templates/customer.html`** dosyasını özelleştirebilirsiniz.
 
 ---
 
-**📜 Lisans:** Bu proje açık kaynak olup MIT Lisansı altında dağıtılmaktadır. 🎉  
+## Katkıda Bulunma
 
-🚀 **Kolay gelsin ve iyi kodlamalar!** 🚀
+Katkıda bulunmak isteyenler için önerilen adımlar:
+
+1. Bu projeyi `fork`layın.
+2. Yeni bir dal (branch) oluşturun.
+3. Geliştirmelerinizi yaparak `commit` edin.
+4. Pull request gönderin.
+
+---
+
+**Lisans:** Bu proje, MIT Lisansı kapsamında açık kaynak olarak sunulmaktadır.
